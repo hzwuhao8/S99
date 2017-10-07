@@ -25,7 +25,12 @@ class P06Test extends FunSuite with Checkers {
 
     check { (a: List[A], b: List[A]) =>
       if (a != b) {
-        isPalindrome(a ::: b.reverse) == false
+        val c = a ::: b.reverse
+        if (c.size == 1) {
+          isPalindrome(c)
+        } else {
+          isPalindrome(c) == false
+        }
       } else {
         isPalindrome(a ::: b.reverse)
       }
