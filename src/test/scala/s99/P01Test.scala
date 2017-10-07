@@ -6,10 +6,10 @@ import org.scalacheck.Arbitrary._
 import org.scalacheck.Prop._
 import scala.util.Try
 
-class P01Suit extends FunSuite with Checkers {
+class P01Test extends FunSuite with Checkers {
  import P01._
   test("list last check") {
-    check { (a: List[Int]) =>
+    check { (a: List[AnyVal]) =>
       if (a.isEmpty) {
         assertThrows[java.util.NoSuchElementException]{
           last(a)
