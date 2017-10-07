@@ -23,5 +23,5 @@ libraryDependencies ++= Seq(
  
 )
 
-
+coverageEnabled := true
 
