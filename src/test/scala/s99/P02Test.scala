@@ -4,7 +4,7 @@ import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Prop._
-import scala.util.Try
+
 
 class P02Test extends FunSuite with Checkers {
   import P02._
