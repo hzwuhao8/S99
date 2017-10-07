@@ -7,14 +7,15 @@ import org.scalacheck.Prop._
 
 class P06Test extends FunSuite with Checkers {
   import P06._
+  type A = AnyVal
   test("whether a list is a palindrome") {
-    check { (a: List[Int]) =>
+    check { (a: List[A]) =>
       isPalindrome(a ::: a.reverse)
     }
-    check { (b: List[Int], x: Int) =>
+    check { (b: List[A], x: A) =>
       isPalindrome(b ::: List(x) ::: b.reverse)
     }
-    check { (b: List[Int], x: Int) =>
+    check { (b: List[A], x: A) =>
       if (b.isEmpty) {
         isPalindrome(x :: b ::: b.reverse)
       } else {
@@ -22,7 +23,7 @@ class P06Test extends FunSuite with Checkers {
       }
     }
 
-    check { (a: List[Int], b: List[Int]) =>
+    check { (a: List[A], b: List[A]) =>
       if (a != b) {
         isPalindrome(a ::: b.reverse) == false
       } else {
