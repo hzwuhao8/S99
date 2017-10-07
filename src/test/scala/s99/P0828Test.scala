@@ -17,6 +17,10 @@ class P0828Test extends FunSuite with Checkers {
     val res1 = compress(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
     assert(res1 == List('a, 'b, 'c, 'a, 'd, 'e))
   }
+  test("P08 compress empty List ") {
+    val res1 = compress(Nil)
+    assert(res1 == Nil)
+  }
   test("P08 check") {
     val smallString = Gen.listOfN[Char](10, Gen.alphaChar).map { l =>
       val l1 = l.distinct
@@ -30,9 +34,8 @@ class P0828Test extends FunSuite with Checkers {
     }
 
     check { (size: Int) =>
-
-      val l0gen = Gen.listOfN(scala.util.Random.nextInt(10), Gen.alphaNumChar)
-
+      val smallIntGen = Gen.choose(0, 100)
+      val l0gen = smallIntGen.flatMap { max => Gen.listOfN(max, Gen.alphaNumChar) }
       val l1gen = l0gen.map { _.distinct }
       val resgen: Gen[Boolean] = l1gen.map { l1 =>
         val l2 = l1.map { c => (0 to (scala.util.Random.nextInt(10) + 1)).map(_ => c) }
@@ -41,7 +44,7 @@ class P0828Test extends FunSuite with Checkers {
 
         l1 == compress(l2.flatten)
       }
-     Prop.forAll(resgen) { x => x }
+      Prop.forAll(resgen) { x => x }
     }
 
   }

@@ -10,6 +10,5 @@ object P0828 {
     case y1 :: y2 :: ys if (y1 != y2) => y1 :: compress(y2 :: ys)
 
   }
-  
-  
+
 }
