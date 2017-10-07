@@ -1,22 +1,11 @@
 language: scala
 
+scala:
+  - 2.12.3
 
-script: sbt ++$TRAVIS_SCALA_VERSION test
+script:
+  - sbt clean coverage test coverageReport
 
-matrix:
-  include:
-    - scala: 2.12.3
-      env: TRAVIS_SBT_VERSION="0.13.16"
-
-before_cache:
-  - find $HOME/.sbt -name "*.lock" | xargs rm
-  - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
-
-cache:
-  directories:
-    - $HOME/.ivy2/cache
-    - $HOME/.sbt/boot
-
-before_script:
-  - sudo chmod +x /usr/local/bin/sbt
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -t c81983d6-4a86-49d0-a407-458b83f73ba7
 
