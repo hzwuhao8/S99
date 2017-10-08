@@ -281,4 +281,12 @@ object P0828 {
     case (Nil, _) if n < 0 => a :: xs
     case (p1, p2)          => p1 ::: (a :: p2)
   }
+
+  def range(s: Int, t: Int): List[Int] = {
+    if (s > t) {
+      Nil
+    } else {
+      s :: range(s + 1, t)
+    }
+  }
 }
