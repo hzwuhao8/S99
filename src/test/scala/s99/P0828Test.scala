@@ -233,10 +233,28 @@ class P0828Test extends FunSuite with Checkers {
     check { (n: Int, xs: List[Int]) =>
       if (n >= 0 && n <= xs.size) {
         randomSelect(n, xs).size == n
-      }else if(n >0 && n >= xs.size) {
+      } else if (n > 0 && n >= xs.size) {
         randomSelect(n, xs).size == xs.size
-      }else{
+      } else {
         randomSelect(n, xs).size == 0
+      }
+    }
+  }
+  test("P24  Lotto: Draw N different random numbers from the set 1..M.") {
+    val gen1 = Gen.choose(1, 8)
+    val gen2 = Gen.choose(16, 48)
+    val gen3 = for {
+      n <- gen1
+      m <- gen2
+    } yield {
+      val res = lotto(n, m)
+      (n, m, res)
+    }
+
+    check {
+      Prop.forAll(gen3) {
+        case (n, m, res) =>
+          res.size == n && res.toSet.size == n && res.forall(x => x <= m && x >= 1)
       }
     }
   }

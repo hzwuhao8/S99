@@ -290,15 +290,20 @@ object P0828 {
       s :: range(s + 1, t)
     }
   }
-  
-  def randomSelect[A](n:Int ,xs: List[A]): List[A] = {
-    if(n <=0) Nil
-    else if( n >= xs.size){
+
+  def randomSelect[A](n: Int, xs: List[A]): List[A] = {
+    if (n <= 0) Nil
+    else if (n >= xs.size) {
       xs
-    }else{
+    } else {
       val index = Random.nextInt(n)
-      val tmp = removeAt(index,xs)
-      tmp._2 :: randomSelect(n-1, tmp._1)
+      val tmp = removeAt(index, xs)
+      tmp._2 :: randomSelect(n - 1, tmp._1)
     }
+  }
+
+  def lotto(n: Int, m: Int): List[Int] = {
+    val res1 = range(1, m + 1)
+    randomSelect(n, res1)
   }
 }
