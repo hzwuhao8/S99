@@ -186,7 +186,7 @@ object P0828 {
 
   def drop[A](n: Int, xs: List[A]): List[A] = {
     def dropR(c: Int, xs: List[A]): List[A] = {
-      debug(s"n=${n}\txs=${xs}")
+      //debug(s"n=${n}\txs=${xs}")
       (c, xs) match {
 
         case (_, Nil)     => Nil
@@ -196,5 +196,20 @@ object P0828 {
     }
 
     dropR(n, xs)
+  }
+
+  def dropRec[A](n: Int, xs: List[A]): List[A] = {
+    @tailrec
+    def dropR(c: Int, xs: List[A], res: List[A]): List[A] = {
+      //debug(s"n=${n}\txs=${xs}")
+      (c, xs) match {
+
+        case (_, Nil)     => res.reverse
+        case (1, a :: as) => dropR(n, as, res)
+        case (c, a :: as) => dropR(c - 1, as, a :: res)
+      }
+    }
+
+    dropR(n, xs, Nil)
   }
 }

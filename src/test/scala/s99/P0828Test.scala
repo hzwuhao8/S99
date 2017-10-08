@@ -149,11 +149,14 @@ class P0828Test extends FunSuite with Checkers {
       val resgen = smallIntGen.map { n =>
         debug(s"n={$n},a=${a}")
         val res1 = drop(n, a)
+
         val res2 = a.zipWithIndex.filter(x => (x._2 + 1) % n != 0).map { _._1 }
+        val res3 = dropRec(n, a)
         debug(s"res1=${res1}")
         debug(s"res2=${res2}")
-        
+        debug(s"res3=${res3}")
         res1 == res2
+        res1 == res3
       }
       Prop.forAll(resgen) { x => x }
     }
