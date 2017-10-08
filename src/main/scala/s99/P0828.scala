@@ -222,13 +222,26 @@ object P0828 {
         (a :: r._1, r._2)
     }
   }
-  
+
   @tailrec
   def splitRec[A](n: Int, xs: List[A], res: (List[A], List[A])): (List[A], List[A]) = {
     (n, xs) match {
       case (_, Nil)           => (res._1.reverse, res._2.reverse)
       case (x, _) if (x <= 0) => (res._1, xs ::: res._2)
       case (x, a :: as)       => splitRec(x - 1, as, (a :: res._1, res._2))
+    }
+  }
+
+  def slice[A](from: Int, until: Int, xs: List[A]): List[A] = {
+    if (from >= until) {
+      Nil
+    } else {
+      xs match {
+        case Nil                  => Nil
+        case a :: as if from <= 0 => a :: slice(from, until - 1, as)
+        case a :: as              => slice(from - 1, until - 1, as)
+      }
+
     }
   }
 }
