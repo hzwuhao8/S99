@@ -293,7 +293,7 @@ object P0828 {
 
   def randomSelect[A](n: Int, xs: List[A]): List[A] = {
     if (n <= 0) Nil
-    else if (n >= xs.size) {
+    else if (n > xs.size) {
       xs
     } else {
       val index = Random.nextInt(n)
@@ -305,5 +305,14 @@ object P0828 {
   def lotto(n: Int, m: Int): List[Int] = {
     val res1 = range(1, m + 1)
     randomSelect(n, res1)
+  }
+
+  def randomPermute[A](xs: List[A]): List[A] = {
+    randomSelect(xs.size, xs)
+  }
+  
+  
+  def combinations[A](n: Int, xs: List[A]): List[List[A]] = {
+    Nil
   }
 }

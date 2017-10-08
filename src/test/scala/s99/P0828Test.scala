@@ -258,4 +258,16 @@ class P0828Test extends FunSuite with Checkers {
       }
     }
   }
+
+  test("P25 Generate a random permutation of the elements of a list.") {
+    check { (a: List[Int]) =>
+      val res1 = randomPermute(a)
+      res1.size == a.size
+    }
+  }
+  test("P26  Generate the combinations of K distinct objects chosen from the N elements of a list.") {
+    val l1 = List('a, 'b, 'c, 'd, 'e, 'f)
+    val res = combinations(3, l1)
+    res.size == 220
+  }
 }
