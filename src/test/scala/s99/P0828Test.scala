@@ -306,5 +306,13 @@ class P0828Test extends FunSuite with Checkers {
     val res = lsort(l1)
     val l2 = List(List('o), List('d, 'e), List('d, 'e), List('m, 'n), List('a, 'b, 'c), List('f, 'g, 'h), List('i, 'j, 'k, 'l))
     assert(res == l2)
+    
+    
+  }
+  test("P28 lsortFreq"){
+     val l1 = List(List('a, 'b, 'c), List('d, 'e), List('f, 'g, 'h), List('d, 'e), List('i, 'j, 'k, 'l), List('m, 'n), List('o))
+    val res = lsortFreq(l1)
+    val l2 = List(List('i, 'j, 'k, 'l), List('o), List('a, 'b, 'c), List('f, 'g, 'h), List('d, 'e), List('d, 'e), List('m, 'n))
+    assert(res == l2)
   }
 }

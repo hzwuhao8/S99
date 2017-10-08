@@ -330,4 +330,10 @@ object P0828 {
   def lsort[A](xs: List[List[A]]): List[List[A]] = {
     xs.map { x => (x, x.size) }.sortBy(_._2).map { _._1 }
   }
+
+  def lsortFreq[A](xs: List[List[A]]): List[List[A]] = {
+    val xs1 = xs.map { x => (x, x.size) }.groupBy(_._2).toList.sortBy( _._2.size)
+    val xs2 = xs1.map{ _._2}.flatMap{ x => x.map{ _._1}}
+    xs2
+  }
 }
