@@ -182,4 +182,15 @@ class P0828Test extends FunSuite with Checkers {
       res3 == res2
     }
   }
+  
+  test("P19 Rotate a list N places to the left.") {
+    val l1 = List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)
+    val l2 = List('d, 'e, 'f, 'g, 'h, 'i, 'j, 'k, 'a, 'b, 'c)
+    val res1 = rotate(3, l1)
+    assert(res1 == l2)
+
+    val l3 = List('j, 'k, 'a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i)
+    val res2 = rotate(-2, l1)
+    assert(res2 == l3)
+  }
 }

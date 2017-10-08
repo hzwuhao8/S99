@@ -260,4 +260,14 @@ object P0828 {
 
     }
   }
+  
+  def rotate[A](n: Int, xs :List[A]): List[A] = {
+      val bound = if(xs.isEmpty) 0  else n % xs.size
+      if( bound <0) 
+        rotate(bound + xs.size , xs)
+      else {
+        val tmp = split(bound , xs)
+        tmp._2 ::: tmp._1
+      }  
+  }
 }
