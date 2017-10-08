@@ -53,8 +53,12 @@ class P0828Test extends FunSuite with Checkers {
   test("P09  Pack consecutive duplicates of list elements into sublists.") {
     val l1 = List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)
     val l2 = List(List('a, 'a, 'a, 'a), List('b), List('c, 'c), List('a, 'a), List('d), List('e, 'e, 'e, 'e))
-    val res1 = pack(l1)
-    assert(res1 == l2)
+    assert(pack(l1) == l2)
+    
+    val l1a = l1 ::: List('f)
+    val l2a = l2 ::: List(List('f))
+    assert( pack(l1a) == l2a)
+    
     val l3 = List(1, 2, 3, 4)
     assert(pack(l3) == l3.map { List(_) })
     assert(pack(Nil) == Nil)
