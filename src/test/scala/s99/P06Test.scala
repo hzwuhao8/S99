@@ -30,7 +30,8 @@ class P06Test extends FunSuite with Checkers {
       if (b.isEmpty) {
         isPalindrome(x :: b ::: b.reverse)
       } else {
-        isPalindrome(x :: b ::: b.reverse) == false
+        val l1 = x :: b ::: b.reverse
+        isPalindrome(l1) == (l1 == l1.reverse)
       }
     }
 
@@ -40,7 +41,7 @@ class P06Test extends FunSuite with Checkers {
         if (c.size == 1) {
           isPalindrome(c)
         } else {
-          isPalindrome(c) == false
+          isPalindrome(c) == (c == c.reverse)
         }
       } else {
         isPalindrome(a ::: b.reverse)
