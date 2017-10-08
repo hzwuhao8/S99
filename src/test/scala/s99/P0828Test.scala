@@ -133,12 +133,13 @@ class P0828Test extends FunSuite with Checkers {
           res.size == a.size * n
           res == a.map { x => (1 to n).map { _ => x }.toList }.flatten
         }
-        res == duplicateNRec(n,a,Nil)
+        res == duplicateNRec(n, a, Nil)
       }
 
       Prop.forAll(resgen) { x => x }
     }
-    
-     
+
+    check { (a: List[Int]) => duplicateNRec(2, a, Nil) == duplicateRec(a, Nil) }
+
   }
 }
