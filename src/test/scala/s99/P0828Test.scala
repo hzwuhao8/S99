@@ -267,7 +267,14 @@ class P0828Test extends FunSuite with Checkers {
   }
   test("P26  Generate the combinations of K distinct objects chosen from the N elements of a list.") {
     val l1 = List('a, 'b, 'c, 'd, 'e, 'f)
-    val res = combinations(3, l1)
-    res.size == 220
+    val res0 = combinations(0, l1)
+    assert(res0 == Nil)
+    val res1 = combinations(1, l1)
+    assert(res1 == l1.map { List(_) })
+    val res2 = combinations(2, l1)
+    assert(res2.size == (l1.size * (l1.size - 1) / 2))
+    val res3 = combinations(3, l1)
+    assert(res3.size == (l1.size * (l1.size - 1) * (l1.size - 2) / (3 * 2)))
+    //pending
   }
 }

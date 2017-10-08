@@ -310,9 +310,14 @@ object P0828 {
   def randomPermute[A](xs: List[A]): List[A] = {
     randomSelect(xs.size, xs)
   }
-  
-  
+
   def combinations[A](n: Int, xs: List[A]): List[List[A]] = {
-    Nil
+    (n, xs) match {
+      case (0, xs)      => Nil
+      case (1, xs)      => xs.map { List(_) }
+      case (_, Nil)     => Nil
+      case (2, a :: as) => combinations(1, as).map { x => a :: x } ::: combinations(2, as)
+      case (n, a :: as) => combinations(n - 1, as).map { x => a :: x } ::: combinations(n, as)
+    }
   }
 }
