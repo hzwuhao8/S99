@@ -233,13 +233,29 @@ object P0828 {
   }
 
   def slice[A](from: Int, until: Int, xs: List[A]): List[A] = {
-    if (from >= until) {
+    val from2 = if(from < 0) 0 else from
+    if (from2 >= until) {
       Nil
     } else {
       xs match {
         case Nil                  => Nil
-        case a :: as if from <= 0 => a :: slice(from, until - 1, as)
-        case a :: as              => slice(from - 1, until - 1, as)
+        case a :: as if from2 <= 0 => a :: slice(0, until - 1, as)
+        case a :: as              => slice(from2 - 1, until - 1, as)
+      }
+
+    }
+  }
+  
+  @tailrec
+  def sliceRec[A](from: Int, until: Int, xs: List[A] , res: List[A]): List[A] = {
+    val from2 = if(from < 0) 0 else from
+    if (from2 >= until) {
+      res.reverse
+    } else {
+      xs match {
+        case Nil                  => res.reverse
+        case a :: as if from2 <=0 => sliceRec(0, until - 1, as,a :: res)
+        case a :: as              => sliceRec(from2 - 1, until-1, as,res)
       }
 
     }

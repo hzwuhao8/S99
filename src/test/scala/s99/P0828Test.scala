@@ -171,10 +171,15 @@ class P0828Test extends FunSuite with Checkers {
   }
 
   test("P18 Extract a slice from a list.") {
-    check { (from: Int, until: Int, a: List[Int]) =>
+    check { (from: Byte, until: Byte, a: List[Int]) =>
       val res1 = slice(from, until, a)
       val res2 = a.slice(from, until)
-      res1 == res2 
+      val res3 = sliceRec(from, until, a, Nil)
+      debug(s"res1=${res1}")
+      debug(s"res2=${res2}")
+      debug(s"res3=${res3}")
+      res1 == res2
+      res3 == res2
     }
   }
 }
