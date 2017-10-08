@@ -72,13 +72,21 @@ class P0828Test extends FunSuite with Checkers {
     val l2 = List((4, 'a), (1, 'b), (2, 'c), (2, 'a), (1, 'd), (4, 'e))
     assert(encode(l1) == l2)
     assert(encode(Nil) == Nil)
-    
+
   }
-  
-  test("P11 Modified run-length encoding. use pack and map "){
+
+  test("P11 Modified run-length encoding. use pack and map ") {
     val l1 = List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)
-    val l2 = List((4, 'a), 'b, (2, 'c), (2, 'a), 'd , (4, 'e))
+    val l2 = List((4, 'a), 'b, (2, 'c), (2, 'a), 'd, (4, 'e))
     assert(encodeModified(l1) == l2)
     assert(encodeModified(Nil) == Nil)
+  }
+
+  test("P12 Decode a run-length encoded list.") {
+    val l1 = List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)
+    val l2 = List((4, 'a), (1, 'b), (2, 'c), (2, 'a), (1, 'd), (4, 'e))
+    assert(decode(l2) == l1)
+    assert(decode(Nil) == Nil)
+    assert(decode(List( (4, 'a))) == List('a, 'a, 'a, 'a))
   }
 }

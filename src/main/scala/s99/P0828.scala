@@ -81,4 +81,16 @@ object P0828 {
     }
   }
 
+  def decode[A](xs: List[(Int, A)]): List[A] = {
+    decodeRec(xs, Nil)
+  }
+
+  private def decodeRec[A](xs: List[(Int, A)], res: List[A]): List[A] = {
+    xs match {
+      case Nil      => res
+     
+      case y :: ys  => decodeRec(ys, res ::: (1 to y._1).map { x => y._2 }.toList)
+
+    }
+  }
 }
