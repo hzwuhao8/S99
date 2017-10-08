@@ -91,7 +91,7 @@ class P0828Test extends FunSuite with Checkers {
   }
 
   test("P13 Run-length encoding of a list (direct solution).") {
-    check { (a: List[Int]) =>
+    check { (a: List[Boolean]) =>
       debug(s"a=${a}")
       val res1 = encode(a)
       val res2 = encodeDirect(a)
@@ -117,5 +117,28 @@ class P0828Test extends FunSuite with Checkers {
 
     }
     check { (a: List[AnyVal]) => duplicate(a) == duplicateRec(a, Nil) }
+  }
+
+  test("P15 Duplicate the elements of a list a given number of times.") {
+    val smallIntGen = Gen.choose(-3, 20)
+
+    check { (a: List[Byte]) =>
+      val resgen = smallIntGen.map { n =>
+        debug(s"n=${n},a=${a}")
+        val res = duplicateN(n, a)
+        debug(s"res =${res}")
+        if (n <= 0) {
+          res == a
+        } else {
+          res.size == a.size * n
+          res == a.map { x => (1 to n).map { _ => x }.toList }.flatten
+        }
+        res == duplicateNRec(n,a,Nil)
+      }
+
+      Prop.forAll(resgen) { x => x }
+    }
+    
+     
   }
 }

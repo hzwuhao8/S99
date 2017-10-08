@@ -102,7 +102,7 @@ object P0828 {
 
   @tailrec
   private def encodeDirectRec[A](xs: List[A], res: (List[A], List[(Int, A)])): (List[A], List[(Int, A)]) = {
-    debug(s"xs=${xs}\tres=${res}")
+    //debug(s"xs=${xs}\tres=${res}")
     xs match {
       case Nil => res
       case y1 :: Nil => {
@@ -160,4 +160,28 @@ object P0828 {
       case a :: as => duplicateRec(as, a :: a :: res)
     }
   }
+
+  def duplicateN[A](n: Int, xs: List[A]): List[A] = {
+    if (n <= 1) {
+      xs
+    } else {
+      xs match {
+        case Nil     => Nil
+        case a :: as => List.fill(n)(a) ::: duplicateN(n, as)
+      }
+    }
+  }
+
+  @tailrec
+  def duplicateNRec[A](n: Int, xs: List[A], res: List[A]): List[A] = {
+    if (n <= 1) {
+      xs
+    } else {
+      xs match {
+        case Nil     => res.reverse
+        case a :: as => duplicateNRec(n, as, List.fill(n)(a) ::: res)
+      }
+    }
+  }
+
 }
