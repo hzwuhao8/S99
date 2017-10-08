@@ -50,4 +50,16 @@ class P0828Test extends FunSuite with Checkers {
     check { (a: List[AnyVal]) => compress(a) == compress2(a) }
   }
 
+  test("P09  Pack consecutive duplicates of list elements into sublists.") {
+    val l1 = List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)
+    val l2 = List(List('a, 'a, 'a, 'a), List('b), List('c, 'c), List('a, 'a), List('d), List('e, 'e, 'e, 'e))
+    val res1 = pack(l1)
+    assert(res1 == l2)
+    val l3 = List(1, 2, 3, 4)
+    assert(pack(l3) == l3.map { List(_) })
+    assert(pack(Nil) == Nil)
+    assert(pack(List(1)) == List(List(1)))
+    assert(pack(List(1,1)) == List(List(1,1)))
+    
+  }
 }
