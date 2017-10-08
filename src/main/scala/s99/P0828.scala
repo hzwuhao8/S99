@@ -323,7 +323,11 @@ object P0828 {
 
   def group[A](l2: List[Int], xs: List[A]): List[List[List[A]]] = {
     require(l2.sum == xs.size)
-    
+
     Nil
+  }
+
+  def lsort[A](xs: List[List[A]]): List[List[A]] = {
+    xs.map { x => (x, x.size) }.sortBy(_._2).map { _._1 }
   }
 }

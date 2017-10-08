@@ -268,13 +268,13 @@ class P0828Test extends FunSuite with Checkers {
   test("P26 Generate the combinations of K distinct objects chosen from the N elements of a list.") {
     def c(n: Int, i: Int): Int = {
       require(n > 0 && i > 0 && n > i)
-      val l1 = n.to((n-i+1), -1)
+      val l1 = n.to((n - i + 1), -1)
       val l2 = 1.to(i)
       l1.product / l2.product
     }
-    
+
     val l1 = List('a, 'b, 'c, 'd, 'e, 'f)
-    
+
     val res0 = combinations(0, l1)
     assert(res0 == Nil)
     val res1 = combinations(1, l1)
@@ -283,21 +283,28 @@ class P0828Test extends FunSuite with Checkers {
     assert(res2.size == c(l1.size, 2))
     val res3 = combinations(3, l1)
     assert(res3.size == c(l1.size, 3))
-    
+
     val res4 = combinations(4, l1)
     assert(res4.size == c(l1.size, 4))
-    
+
     val res5 = combinations(5, l1)
     debug(s"res5=${res5}")
     assert(res5.size == c(l1.size, 5))
     //pending
   }
-  
-  test("P27 Group the elements of a set into disjoint subsets."){
+
+  test("P27 Group the elements of a set into disjoint subsets.") {
     val l1 = List("Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida")
     val l2 = List(2, 2, 5)
-    val res = group(l2,l1)
+    val res = group(l2, l1)
     debug(s"res=${res}")
     pending
+  }
+
+  test("P28 Sorting a list of lists according to length of sublists.") {
+    val l1 = List(List('a, 'b, 'c), List('d, 'e), List('f, 'g, 'h), List('d, 'e), List('i, 'j, 'k, 'l), List('m, 'n), List('o))
+    val res = lsort(l1)
+    val l2 = List(List('o), List('d, 'e), List('d, 'e), List('m, 'n), List('a, 'b, 'c), List('f, 'g, 'h), List('i, 'j, 'k, 'l))
+    assert(res == l2)
   }
 }
