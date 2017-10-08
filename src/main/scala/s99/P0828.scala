@@ -146,4 +146,18 @@ object P0828 {
     }
   }
 
+  def duplicate[A](xs: List[A]): List[A] = {
+    xs match {
+      case Nil     => Nil
+      case a :: as => List(a, a) ::: duplicate(as)
+    }
+  }
+
+  @tailrec
+  def duplicateRec[A](xs: List[A], res: List[A]): List[A] = {
+    xs match {
+      case Nil     => res.reverse
+      case a :: as => duplicateRec(as, a :: a :: res)
+    }
+  }
 }

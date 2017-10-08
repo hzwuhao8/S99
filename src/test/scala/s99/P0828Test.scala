@@ -99,14 +99,23 @@ class P0828Test extends FunSuite with Checkers {
       debug(s"res2=${res2}")
       res1 == res2
     }
-   val l1 = List(1,1,1,1)
-   assert(encode(l1) == encodeDirect(l1))
-   val l2 = List(1)
-   assert(encode(l2) == encodeDirect(l2))
-   val l3 = List('a,'a)
-   assert(encode(l3) == encodeDirect(l3))
-   
-   val l4 = List('a,'a,'b)
-   assert(encode(l4) == encodeDirect(l4))
+    val l1 = List(1, 1, 1, 1)
+    assert(encode(l1) == encodeDirect(l1))
+    val l2 = List(1)
+    assert(encode(l2) == encodeDirect(l2))
+    val l3 = List('a, 'a)
+    assert(encode(l3) == encodeDirect(l3))
+
+    val l4 = List('a, 'a, 'b)
+    assert(encode(l4) == encodeDirect(l4))
+  }
+
+  test("P14 Duplicate the elements of a list.") {
+    check { (a: List[Int]) =>
+      val res = duplicate(a)
+      res == (a.zip(a)).map { case (a, b) => List(a, b) }.flatten
+
+    }
+    check { (a: List[AnyVal]) => duplicate(a) == duplicateRec(a, Nil) }
   }
 }
