@@ -7,7 +7,7 @@ import org.scalacheck.Prop._
 
 class P06Test extends FunSuite with Checkers {
   import P06._
-  type A = AnyVal
+  type A = Boolean
   test("whether a list is a palindrome") {
     check { (a: List[A]) =>
       isPalindrome(a ::: a.reverse)
@@ -15,6 +15,17 @@ class P06Test extends FunSuite with Checkers {
     check { (b: List[A], x: A) =>
       isPalindrome(b ::: List(x) ::: b.reverse)
     }
+    /**
+     * TODO
+     * b = List(false )
+     * x = false
+     * 
+     * or
+     * 
+     * b = List(true)
+     * x = true
+     * 
+     */
     check { (b: List[A], x: A) =>
       if (b.isEmpty) {
         isPalindrome(x :: b ::: b.reverse)
