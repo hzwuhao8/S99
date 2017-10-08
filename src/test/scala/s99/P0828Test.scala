@@ -87,6 +87,17 @@ class P0828Test extends FunSuite with Checkers {
     val l2 = List((4, 'a), (1, 'b), (2, 'c), (2, 'a), (1, 'd), (4, 'e))
     assert(decode(l2) == l1)
     assert(decode(Nil) == Nil)
-    assert(decode(List( (4, 'a))) == List('a, 'a, 'a, 'a))
+    assert(decode(List((4, 'a))) == List('a, 'a, 'a, 'a))
+  }
+
+  test("P13 Run-length encoding of a list (direct solution).") {
+    check { (a: List[Int]) =>
+      debug(s"a=${a}")
+      val res1 = encode(a)
+      val res2 = encodeDirect(a)
+      debug(s"res1=${res1}")
+      debug(s"res2=${res2}")
+      res1 == res2
+    }
   }
 }
