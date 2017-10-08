@@ -202,7 +202,7 @@ class P0828Test extends FunSuite with Checkers {
 
   }
 
-  test("P21  Insert an element at a given position into a list.") {
+  test("P21 Insert an element at a given position into a list.") {
     val l1 = List('a, 'b, 'c, 'd)
     val l2 = List('a, 'new, 'b, 'c, 'd)
     val a = 'new
@@ -240,7 +240,7 @@ class P0828Test extends FunSuite with Checkers {
       }
     }
   }
-  test("P24  Lotto: Draw N different random numbers from the set 1..M.") {
+  test("P24 Lotto: Draw N different random numbers from the set 1..M.") {
     val gen1 = Gen.choose(1, 8)
     val gen2 = Gen.choose(16, 48)
     val gen3 = for {
@@ -265,16 +265,32 @@ class P0828Test extends FunSuite with Checkers {
       res1.size == a.size
     }
   }
-  test("P26  Generate the combinations of K distinct objects chosen from the N elements of a list.") {
+  test("P26 Generate the combinations of K distinct objects chosen from the N elements of a list.") {
+    def c(n: Int, i: Int): Int = {
+      require(n > 0 && i > 0 && n > i)
+      val l1 = n.to((n-i+1), -1)
+      val l2 = 1.to(i)
+      l1.product / l2.product
+
+    }
+
     val l1 = List('a, 'b, 'c, 'd, 'e, 'f)
+    
     val res0 = combinations(0, l1)
     assert(res0 == Nil)
     val res1 = combinations(1, l1)
     assert(res1 == l1.map { List(_) })
     val res2 = combinations(2, l1)
-    assert(res2.size == (l1.size * (l1.size - 1) / 2))
+    assert(res2.size == c(l1.size, 2))
     val res3 = combinations(3, l1)
-    assert(res3.size == (l1.size * (l1.size - 1) * (l1.size - 2) / (3 * 2)))
+    assert(res3.size == c(l1.size, 3))
+    
+    val res4 = combinations(4, l1)
+    assert(res4.size == c(l1.size, 4))
+    
+    val res5 = combinations(5, l1)
+    debug(s"res5=${res5}")
+    assert(res5.size == c(l1.size, 5))
     //pending
   }
 }
