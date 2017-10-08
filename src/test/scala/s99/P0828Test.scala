@@ -92,11 +92,11 @@ class P0828Test extends FunSuite with Checkers {
 
   test("P13 Run-length encoding of a list (direct solution).") {
     check { (a: List[Boolean]) =>
-      debug(s"a=${a}")
+      // debug(s"a=${a}")
       val res1 = encode(a)
       val res2 = encodeDirect(a)
-      debug(s"res1=${res1}")
-      debug(s"res2=${res2}")
+      //debug(s"res1=${res1}")
+      //debug(s"res2=${res2}")
       res1 == res2
     }
     val l1 = List(1, 1, 1, 1)
@@ -124,9 +124,9 @@ class P0828Test extends FunSuite with Checkers {
 
     check { (a: List[Byte]) =>
       val resgen = smallIntGen.map { n =>
-        debug(s"n=${n},a=${a}")
+        //debug(s"n=${n},a=${a}")
         val res = duplicateN(n, a)
-        debug(s"res =${res}")
+        //debug(s"res =${res}")
         if (n <= 0) {
           res == a
         } else {
@@ -141,5 +141,21 @@ class P0828Test extends FunSuite with Checkers {
 
     check { (a: List[Int]) => duplicateNRec(2, a, Nil) == duplicateRec(a, Nil) }
 
+  }
+
+  test("P16 Drop every Nth element from a list.") {
+    val smallIntGen = Gen.choose(1, 25)
+    check { (a: List[Int]) =>
+      val resgen = smallIntGen.map { n =>
+        debug(s"n={$n},a=${a}")
+        val res1 = drop(n, a)
+        val res2 = a.zipWithIndex.filter(x => (x._2 + 1) % n != 0).map { _._1 }
+        debug(s"res1=${res1}")
+        debug(s"res2=${res2}")
+        
+        res1 == res2
+      }
+      Prop.forAll(resgen) { x => x }
+    }
   }
 }

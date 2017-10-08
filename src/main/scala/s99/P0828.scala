@@ -184,4 +184,17 @@ object P0828 {
     }
   }
 
+  def drop[A](n: Int, xs: List[A]): List[A] = {
+    def dropR(c: Int, xs: List[A]): List[A] = {
+      debug(s"n=${n}\txs=${xs}")
+      (c, xs) match {
+
+        case (_, Nil)     => Nil
+        case (1, a :: as) => dropR(n, as)
+        case (c, a :: as) => a :: dropR(c - 1, as)
+      }
+    }
+
+    dropR(n, xs)
+  }
 }
