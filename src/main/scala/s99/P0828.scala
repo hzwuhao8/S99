@@ -233,41 +233,52 @@ object P0828 {
   }
 
   def slice[A](from: Int, until: Int, xs: List[A]): List[A] = {
-    val from2 = if(from < 0) 0 else from
+    val from2 = if (from < 0) 0 else from
     if (from2 >= until) {
       Nil
     } else {
       xs match {
-        case Nil                  => Nil
+        case Nil                   => Nil
         case a :: as if from2 <= 0 => a :: slice(0, until - 1, as)
-        case a :: as              => slice(from2 - 1, until - 1, as)
+        case a :: as               => slice(from2 - 1, until - 1, as)
       }
 
     }
   }
-  
+
   @tailrec
-  def sliceRec[A](from: Int, until: Int, xs: List[A] , res: List[A]): List[A] = {
-    val from2 = if(from < 0) 0 else from
+  def sliceRec[A](from: Int, until: Int, xs: List[A], res: List[A]): List[A] = {
+    val from2 = if (from < 0) 0 else from
     if (from2 >= until) {
       res.reverse
     } else {
       xs match {
-        case Nil                  => res.reverse
-        case a :: as if from2 <=0 => sliceRec(0, until - 1, as,a :: res)
-        case a :: as              => sliceRec(from2 - 1, until-1, as,res)
+        case Nil                   => res.reverse
+        case a :: as if from2 <= 0 => sliceRec(0, until - 1, as, a :: res)
+        case a :: as               => sliceRec(from2 - 1, until - 1, as, res)
       }
 
     }
   }
-  
-  def rotate[A](n: Int, xs :List[A]): List[A] = {
-      val bound = if(xs.isEmpty) 0  else n % xs.size
-      if( bound <0) 
-        rotate(bound + xs.size , xs)
-      else {
-        val tmp = split(bound , xs)
-        tmp._2 ::: tmp._1
-      }  
+
+  def rotate[A](n: Int, xs: List[A]): List[A] = {
+    val bound = if (xs.isEmpty) 0 else n % xs.size
+    if (bound < 0)
+      rotate(bound + xs.size, xs)
+    else {
+      val tmp = split(bound, xs)
+      tmp._2 ::: tmp._1
+    }
+  }
+
+  def removeAt[A](n: Int, xs: List[A]): (List[A], A) = xs.splitAt(n) match {
+    case (Nil, _) if n < 0 => throw new NoSuchElementException
+    case (pre, e :: post)  => (pre ::: post, e)
+    case (pre, Nil)        => throw new NoSuchElementException
+  }
+
+  def insertAt[A](a: A, n: Int, xs: List[A]): List[A] = xs.splitAt(n) match {
+    case (Nil, _) if n < 0 => a :: xs
+    case (p1, p2)          => p1 ::: (a :: p2)
   }
 }

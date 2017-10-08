@@ -182,7 +182,7 @@ class P0828Test extends FunSuite with Checkers {
       res3 == res2
     }
   }
-  
+
   test("P19 Rotate a list N places to the left.") {
     val l1 = List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)
     val l2 = List('d, 'e, 'f, 'g, 'h, 'i, 'j, 'k, 'a, 'b, 'c)
@@ -192,5 +192,24 @@ class P0828Test extends FunSuite with Checkers {
     val l3 = List('j, 'k, 'a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i)
     val res2 = rotate(-2, l1)
     assert(res2 == l3)
+  }
+
+  test("P20 Remove the Kth element from a list.") {
+    val l1 = List('a, 'b, 'c, 'd)
+    val l2 = (List('a, 'c, 'd), 'b)
+    val res = removeAt(1, List('a, 'b, 'c, 'd))
+    assert(res == l2)
+
+  }
+
+  test("P21  Insert an element at a given position into a list.") {
+    val l1 = List('a, 'b, 'c, 'd)
+    val l2 = List('a, 'new, 'b, 'c, 'd)
+    val a = 'new
+    val res = insertAt(a, 1, l1)
+    assert(res == l2)
+    assert(insertAt(a, -1, l1) == a :: l1)
+    assert(insertAt(a, 0, l1) == a :: l1)
+    assert(insertAt(a, l1.size, l1) == l1 ::: List(a))
   }
 }
