@@ -161,4 +161,12 @@ class P0828Test extends FunSuite with Checkers {
       Prop.forAll(resgen) { x => x }
     }
   }
+  test("P17 Split a list into two parts.") {
+    check { (n: Int, a: List[Int]) =>
+      split(n, a) == a.splitAt(n)
+    }
+    check { (n: Int, a: List[Int]) =>
+      splitRec(n, a, (Nil, Nil)) == a.splitAt(n)
+    }
+  }
 }

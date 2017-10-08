@@ -212,4 +212,23 @@ object P0828 {
 
     dropR(n, xs, Nil)
   }
+
+  def split[A](n: Int, xs: List[A]): (List[A], List[A]) = {
+    (n, xs) match {
+      case (_, Nil)           => (Nil, Nil)
+      case (x, _) if (x <= 0) => (Nil, xs)
+      case (x, a :: as) =>
+        val r = split(x - 1, as)
+        (a :: r._1, r._2)
+    }
+  }
+  
+  @tailrec
+  def splitRec[A](n: Int, xs: List[A], res: (List[A], List[A])): (List[A], List[A]) = {
+    (n, xs) match {
+      case (_, Nil)           => (res._1.reverse, res._2.reverse)
+      case (x, _) if (x <= 0) => (res._1, xs ::: res._2)
+      case (x, a :: as)       => splitRec(x - 1, as, (a :: res._1, res._2))
+    }
+  }
 }
