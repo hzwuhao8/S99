@@ -5,10 +5,10 @@ import com.typesafe.scalalogging.Logger
 
 object P0828 {
   val logger = Logger("P0828")
-  def debug(arg: String)(implicit line: sourcecode.Line, name:sourcecode.FullName) = {
+  def debug(arg: String)(implicit line: sourcecode.Line, name: sourcecode.FullName) = {
     logger.debug(s"${name.value}:${line.value} ${arg}")
   }
-  
+
   def compress[A](xs: List[A]): List[A] = xs match {
     case Nil                          => Nil
     case y1 :: Nil                    => List(y1)
@@ -32,11 +32,11 @@ object P0828 {
 
   def pack[A](xs: List[A]): List[List[A]] = {
     val size = 60
-    debug("*"*size)
+    debug("*" * size)
     val res = packRec(xs, (Nil, Nil))
     debug(s"res=${res}")
-    debug("*"*size + "\n")
-    
+    debug("*" * size + "\n")
+
     res._2
   }
 
@@ -66,8 +66,19 @@ object P0828 {
       }
     }
   }
-  
-  def encode[A](xs: List[A]): List[(Int,A)] ={
-    pack(xs).map{  (x:  List[A]) => (x.size , x.head)}
+
+  def encode[A](xs: List[A]): List[(Int, A)] = {
+    pack(xs).map { (x: List[A]) => (x.size, x.head) }
   }
+
+  def encodeModified[A](xs: List[A]): List[Any] = {
+    pack(xs).map { (x: List[A]) =>
+      x match {
+        case Nil      => Nil
+        case y :: Nil => y
+        case _        => (x.size, x.head)
+      }
+    }
+  }
+
 }

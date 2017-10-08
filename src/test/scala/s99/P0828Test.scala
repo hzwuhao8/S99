@@ -75,4 +75,10 @@ class P0828Test extends FunSuite with Checkers {
     
   }
   
+  test("P11 Modified run-length encoding. use pack and map "){
+    val l1 = List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)
+    val l2 = List((4, 'a), 'b, (2, 'c), (2, 'a), 'd , (4, 'e))
+    assert(encodeModified(l1) == l2)
+    assert(encodeModified(Nil) == Nil)
+  }
 }
