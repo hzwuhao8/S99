@@ -99,5 +99,14 @@ class P0828Test extends FunSuite with Checkers {
       debug(s"res2=${res2}")
       res1 == res2
     }
+   val l1 = List(1,1,1,1)
+   assert(encode(l1) == encodeDirect(l1))
+   val l2 = List(1)
+   assert(encode(l2) == encodeDirect(l2))
+   val l3 = List('a,'a)
+   assert(encode(l3) == encodeDirect(l3))
+   
+   val l4 = List('a,'a,'b)
+   assert(encode(l4) == encodeDirect(l4))
   }
 }

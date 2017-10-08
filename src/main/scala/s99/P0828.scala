@@ -131,7 +131,10 @@ object P0828 {
         encodeDirectRec(y2 :: ys, (p1, p2))
       }
       case y1 :: y2 :: ys if (y1 != y2) => {
-        val p1: List[A] = Nil
+        val p1: List[A] = res._1 match {
+          case Nil     => List(y1)
+          case a :: as => if (a == y1) y1 :: res._1 else List(y1)
+        }
         val p2: List[(Int, A)] = res._2 match {
           case Nil     => List((1, y1))
           case List(a) => if (a._2 == y1) List((a._1 + 1, a._2)) else res._2 ::: List((1, y1))
