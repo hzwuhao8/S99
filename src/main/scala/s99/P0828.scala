@@ -328,7 +328,7 @@ object P0828 {
   }
 
   def lsort[A](xs: List[List[A]]): List[List[A]] = {
-    xs.map { x => (x, x.size) }.sortBy(_._2).map { _._1 }
+    xs .sortBy( _.size )
   }
 
   def lsortFreq[A](xs: List[List[A]]): List[List[A]] = {
