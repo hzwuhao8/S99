@@ -2,6 +2,7 @@ package s99
 
 import scala.annotation.tailrec
 import com.typesafe.scalalogging.Logger
+import scala.util.Random
 
 object P0828 {
   val logger = Logger("P0828")
@@ -287,6 +288,17 @@ object P0828 {
       Nil
     } else {
       s :: range(s + 1, t)
+    }
+  }
+  
+  def randomSelect[A](n:Int ,xs: List[A]): List[A] = {
+    if(n <=0) Nil
+    else if( n >= xs.size){
+      xs
+    }else{
+      val index = Random.nextInt(n)
+      val tmp = removeAt(index,xs)
+      tmp._2 :: randomSelect(n-1, tmp._1)
     }
   }
 }

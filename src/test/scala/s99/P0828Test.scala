@@ -212,20 +212,32 @@ class P0828Test extends FunSuite with Checkers {
     assert(insertAt(a, 0, l1) == a :: l1)
     assert(insertAt(a, l1.size, l1) == l1 ::: List(a))
   }
-  
-  test("P22 Create a list containing all integers within a given range."){
+
+  test("P22 Create a list containing all integers within a given range.") {
     val g1 = Gen.choose(0, 10)
-    val g2 = Gen.choose(10,20)
-    val g3 = for{
-       s <- g1
-       t <- g2
-    }yield{
-      val res1 =  range(s,t)
-      val res2 = s.to(t).toList 
+    val g2 = Gen.choose(10, 20)
+    val g3 = for {
+      s <- g1
+      t <- g2
+    } yield {
+      val res1 = range(s, t)
+      val res2 = s.to(t).toList
       debug(s"s=${s}\tt=${t}\tres1=${res1}")
       debug(s"s=${s}\tt=${t}\tres1=${res2}")
-      (res1,res2)
+      (res1, res2)
     }
-    check{  Prop.forAll(g3){  p => p._1 == p._2 }}
+    check { Prop.forAll(g3) { p => p._1 == p._2 } }
+  }
+
+  test("P23 randomSelect") {
+    check { (n: Int, xs: List[Int]) =>
+      if (n >= 0 && n <= xs.size) {
+        randomSelect(n, xs).size == n
+      }else if(n >0 && n >= xs.size) {
+        randomSelect(n, xs).size == xs.size
+      }else{
+        randomSelect(n, xs).size == 0
+      }
+    }
   }
 }
