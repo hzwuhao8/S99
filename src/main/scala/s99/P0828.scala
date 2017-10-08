@@ -320,4 +320,10 @@ object P0828 {
       case (n, a :: as) => combinations(n - 1, as).map { x => a :: x } ::: combinations(n, as)
     }
   }
+
+  def group[A](l2: List[Int], xs: List[A]): List[List[List[A]]] = {
+    require(l2.sum == xs.size)
+    
+    Nil
+  }
 }

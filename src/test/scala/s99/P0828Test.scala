@@ -271,9 +271,8 @@ class P0828Test extends FunSuite with Checkers {
       val l1 = n.to((n-i+1), -1)
       val l2 = 1.to(i)
       l1.product / l2.product
-
     }
-
+    
     val l1 = List('a, 'b, 'c, 'd, 'e, 'f)
     
     val res0 = combinations(0, l1)
@@ -292,5 +291,13 @@ class P0828Test extends FunSuite with Checkers {
     debug(s"res5=${res5}")
     assert(res5.size == c(l1.size, 5))
     //pending
+  }
+  
+  test("P27 Group the elements of a set into disjoint subsets."){
+    val l1 = List("Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida")
+    val l2 = List(2, 2, 5)
+    val res = group(l2,l1)
+    debug(s"res=${res}")
+    pending
   }
 }
