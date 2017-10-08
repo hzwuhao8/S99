@@ -1,9 +1,11 @@
 package s99
 
 import scala.annotation.tailrec
+import com.typesafe.scalalogging.Logger
 
 object P0828 {
-
+  val logger = Logger("P0828")
+  
   def compress[A](xs: List[A]): List[A] = xs match {
     case Nil                          => Nil
     case y1 :: Nil                    => List(y1)
@@ -25,11 +27,20 @@ object P0828 {
     }
   }
 
-  def pack[A](xs: List[A]): List[List[A]] = packRec(xs, (Nil, Nil))._2
+  def pack[A](xs: List[A]): List[List[A]] = {
+    logger.debug("\n")
+    logger.debug("*"*40)
+    logger.debug(s"pack xs=${xs}")
+    val res = packRec(xs, (Nil, Nil))
+    logger.debug(s"res=${res}")
+    logger.debug("*"*40)
+    logger.debug("\n")
+    res._2
+  }
 
   @tailrec
   def packRec[A](xs: List[A], res: (List[A], List[List[A]])): (List[A], List[List[A]]) = {
-    //println(s"xs=${xs}\tres=${res}")
+    logger.debug(s"xs=${xs}\tres=${res}")
     xs match {
       case Nil => res
       case y1 :: Nil => {
