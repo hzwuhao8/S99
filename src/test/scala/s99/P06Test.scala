@@ -19,12 +19,12 @@ class P06Test extends FunSuite with Checkers {
      * TODO
      * b = List(false )
      * x = false
-     * 
+     *
      * or
-     * 
+     *
      * b = List(true)
      * x = true
-     * 
+     *
      */
     check { (b: List[A], x: A) =>
       if (b.isEmpty) {
@@ -47,5 +47,4 @@ class P06Test extends FunSuite with Checkers {
       }
     }
   }
-
 }
