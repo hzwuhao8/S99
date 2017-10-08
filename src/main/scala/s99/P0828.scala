@@ -5,6 +5,9 @@ import com.typesafe.scalalogging.Logger
 
 object P0828 {
   val logger = Logger("P0828")
+  def debug(arg: String)(implicit line: sourcecode.Line, name:sourcecode.FullName) = {
+    logger.debug(s"${name.value}:${line.value} ${arg}")
+  }
   
   def compress[A](xs: List[A]): List[A] = xs match {
     case Nil                          => Nil
@@ -28,19 +31,18 @@ object P0828 {
   }
 
   def pack[A](xs: List[A]): List[List[A]] = {
-    logger.debug("\n")
-    logger.debug("*"*40)
-    logger.debug(s"pack xs=${xs}")
+    val size = 60
+    debug("*"*size)
     val res = packRec(xs, (Nil, Nil))
-    logger.debug(s"res=${res}")
-    logger.debug("*"*40)
-    logger.debug("\n")
+    debug(s"res=${res}")
+    debug("*"*size + "\n")
+    
     res._2
   }
 
   @tailrec
   def packRec[A](xs: List[A], res: (List[A], List[List[A]])): (List[A], List[List[A]]) = {
-    logger.debug(s"xs=${xs}\tres=${res}")
+    debug(s"xs=${xs}\tres=${res}")
     xs match {
       case Nil => res
       case y1 :: Nil => {
