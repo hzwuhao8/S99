@@ -21,7 +21,7 @@ object P0828 {
   def compress2[A](xs: List[A]): List[A] = compressRec(xs, Nil)
 
   @tailrec
-  def compressRec[A](xs: List[A], res: List[A]): List[A] = {
+  private def compressRec[A](xs: List[A], res: List[A]): List[A] = {
     xs match {
       case Nil                          => res
       case y1 :: Nil                    => res ::: List(y1)
@@ -41,7 +41,7 @@ object P0828 {
   }
 
   @tailrec
-  def packRec[A](xs: List[A], res: (List[A], List[List[A]])): (List[A], List[List[A]]) = {
+  private def packRec[A](xs: List[A], res: (List[A], List[List[A]])): (List[A], List[List[A]]) = {
     debug(s"xs=${xs}\tres=${res}")
     xs match {
       case Nil => res
@@ -51,22 +51,23 @@ object P0828 {
           case Nil                  => (List(y1), res._2 ::: List(List(y1)))
           case z :: zs if (z == y1) => (y1 :: p1, res._2 ::: List(y1 :: p1))
           case z :: zs if (z != y1) => (List(y1), res._2 ::: List(List(y1)))
-
         }
         res2
       }
       case y1 :: y2 :: ys if (y1 == y2) => {
         val p1: List[A] = y1 :: res._1
         val p2: List[List[A]] = res._2
-
         packRec(y2 :: ys, (p1, p2))
       }
       case y1 :: y2 :: ys if (y1 != y2) => {
         val p1: List[A] = Nil
-
         val p2: List[List[A]] = res._2 ::: List(y1 :: res._1)
         packRec(y2 :: ys, (p1, p2))
       }
     }
+  }
+  
+  def encode[A](xs: List[A]): List[(Int,A)] ={
+    pack(xs).map{  (x:  List[A]) => (x.size , x.head)}
   }
 }
