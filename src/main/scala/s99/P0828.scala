@@ -322,18 +322,42 @@ object P0828 {
   }
 
   def group[A](l2: List[Int], xs: List[A]): List[List[List[A]]] = {
-    require(l2.sum == xs.size)
+    require(l2.sum == xs.distinct.size)
+    debug(s"l2=${l2},xs=${xs}")
+    val res: List[List[List[A]]] = (l2, xs) match {
+      case (Nil, _)     => Nil
+      case (_, Nil)     => Nil
+      case (List(a), _) => List(List(xs))
+      case (a :: as, xs) =>
+        val s1: List[List[A]] = combinations(a, xs)
+        debug(s"s1=${s1}")
+        val tmp = s1.flatMap { s =>
+          val others = xs.filterNot(s.contains(_))
+          val s2: List[List[List[A]]] = group(as, others)
+          debug(s"s2=${s2}")
+          val s3: List[List[List[A]]] = s2.map { x => s :: x }
 
-    Nil
+          debug(s"s3.size=${s3.size}")
+          debug(s"s3=${s3}")
+          s3
+
+        }
+        val tmp2 = tmp.distinct
+        debug(s"tmp2=${tmp2.mkString("\n", "\n", "\n")}")
+        tmp2
+
+    }
+
+    res
   }
 
   def lsort[A](xs: List[List[A]]): List[List[A]] = {
-    xs .sortBy( _.size )
+    xs.sortBy(_.size)
   }
 
   def lsortFreq[A](xs: List[List[A]]): List[List[A]] = {
-    val xs1 = xs.map { x => (x, x.size) }.groupBy(_._2).toList.sortBy( _._2.size)
-    val xs2 = xs1.map{ _._2}.flatMap{ x => x.map{ _._1}}
+    val xs1 = xs.map { x => (x, x.size) }.groupBy(_._2).toList.sortBy(_._2.size)
+    val xs2 = xs1.map { _._2 }.flatMap { x => x.map { _._1 } }
     xs2
   }
 }

@@ -294,11 +294,31 @@ class P0828Test extends FunSuite with Checkers {
   }
 
   test("P27 Group the elements of a set into disjoint subsets.") {
+    assert(group(Nil, Nil) == Nil)
+    assert(group(List(0), Nil) == Nil)
+    check { (as: Set[Int]) =>
+      val bs = as.toList
+      if (bs.isEmpty) {
+        group(List(bs.size), bs) == Nil
+      } else {
+        group(List(bs.size), bs) == List(List(bs))
+      }
+    }
+
+    val res1 = group(List(1, 2), List('a, 'b, 'c))
+    debug(s"res1=${res1.mkString("\n", "\n", "\n")}")
+    assert(res1.contains(List(List('a), List('b, 'c))))
+
+    val res2 = group(List(1, 1, 1), List('a, 'b, 'c))
+    debug(s"res2=${res2.mkString("\n", "\n", "\n")}")
+    assert(res2.contains(List(List('a), List('b), List('c))))
+
     val l1 = List("Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida")
     val l2 = List(2, 2, 5)
-    val res = group(l2, l1)
-    debug(s"res=${res}")
-    pending
+    val res3 = group(l2, l1)
+
+    assert(res3.contains( List( List("Aldo", "Beat" ),List("Carla", "David" ),List( "Evi", "Flip", "Gary", "Hugo", "Ida")  ) ))
+    //pending
   }
 
   test("P28 Sorting a list of lists according to length of sublists.") {
@@ -306,11 +326,10 @@ class P0828Test extends FunSuite with Checkers {
     val res = lsort(l1)
     val l2 = List(List('o), List('d, 'e), List('d, 'e), List('m, 'n), List('a, 'b, 'c), List('f, 'g, 'h), List('i, 'j, 'k, 'l))
     assert(res == l2)
-    
-    
+
   }
-  test("P28 lsortFreq"){
-     val l1 = List(List('a, 'b, 'c), List('d, 'e), List('f, 'g, 'h), List('d, 'e), List('i, 'j, 'k, 'l), List('m, 'n), List('o))
+  test("P28 lsortFreq") {
+    val l1 = List(List('a, 'b, 'c), List('d, 'e), List('f, 'g, 'h), List('d, 'e), List('i, 'j, 'k, 'l), List('m, 'n), List('o))
     val res = lsortFreq(l1)
     val l2 = List(List('i, 'j, 'k, 'l), List('o), List('a, 'b, 'c), List('f, 'g, 'h), List('d, 'e), List('d, 'e), List('m, 'n))
     assert(res == l2)
