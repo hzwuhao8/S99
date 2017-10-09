@@ -2,19 +2,19 @@ package s99
 
 import scala.language.implicitConversions
 
-object MathOne {
+object MathOne extends Log {
   class IntHelp(n: Int) {
+    require(n >= 0)
     def isPrime(): (Boolean, Seq[Int]) = {
-      val x = Math.abs(n)
-      val max = Math.sqrt(x).toInt
-      val res: Seq[(Int, Boolean)] = for (i <- 2 to max) yield {
-        (i, (x % i) == 0)
+
+      val res: Seq[(Int, Boolean)] = for (i <- 1 to n) yield {
+        (i, (n % i) == 0)
       }
-      val res1 = res.forall(_._2 == false)
-      if (res1) {
-        (true, Seq(n, 1))
+      val res1 = res.filter(_._2 != false)
+      if (res1.size == 2) {
+        (true, res1.map { _._1 })
       } else {
-        (false, res.filter(_._2 != false).map { _._1 })
+        (false, res1.map { _._1 })
       }
     }
   }

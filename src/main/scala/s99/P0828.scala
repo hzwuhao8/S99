@@ -4,15 +4,9 @@ import scala.annotation.tailrec
 import com.typesafe.scalalogging.Logger
 import scala.util.Random
 
-object P0828 {
-  val logger = Logger("P0828")
-  def debug(arg: String)(implicit line: sourcecode.Line, name: sourcecode.FullName) = {
-    logger.debug(s"${name.value}:${line.value} ${arg}")
-  }
-
-  def trace(arg: String)(implicit line: sourcecode.Line, name: sourcecode.FullName) = {
-    logger.trace(s"${name.value}:${line.value} ${arg}")
-  }
+object P0828  extends Log{
+  
+  
 
   def compress[A](xs: List[A]): List[A] = xs match {
     case Nil                          => Nil
