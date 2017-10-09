@@ -57,6 +57,13 @@ object MathOne extends Log {
         case x => pow(p, m - 1, p * res)
       }
     }
+    def goldbach(): (Int, Int) = {
+      require(n > 0 && n % 2 == 0)
+      val xs  = listPrimesinRange(1,n)
+      val ys = P0828.combinations(2, xs)
+      val zs = ys.filter( _.sum == n).head
+      (zs.head, zs.tail.head)
+    }
   }
 
   implicit def int2Help(n: Int): IntHelp = new IntHelp(n)
@@ -81,6 +88,10 @@ object MathOne extends Log {
         gcd(b, a % b)
       }
     }
+  }
+
+  def listPrimesinRange(a: Int, b: Int): List[Int] = {
+    (a to b).filter(_.isPrime()._1).toList
   }
 
 }

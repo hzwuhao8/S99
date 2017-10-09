@@ -89,4 +89,12 @@ class MathTest extends FunSuite with Checkers {
       }
     }
   }
+
+  test("P39") {
+    assert(listPrimesinRange(7, 31) == List(7, 11, 13, 17, 19, 23, 29, 31))
+  }
+
+  test("P40") {
+    assert(28.goldbach == (5, 23))
+  }
 }
