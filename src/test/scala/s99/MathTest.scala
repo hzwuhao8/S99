@@ -14,8 +14,8 @@ import org.scalacheck.Prop
 class MathTest extends FunSuite with Checkers {
 
   def gen3(): Gen[(Int, Int)] = {
-    val gen1 = Gen.choose(0, 1000)
-    val gen2 = Gen.choose(0, 1000)
+    val gen1 = Gen.choose(1, 1000)
+    val gen2 = Gen.choose(1, 1000)
     val gen3 = for {
       a <- gen1
       b <- gen2
@@ -82,9 +82,10 @@ class MathTest extends FunSuite with Checkers {
     assert(315.primeFactorMultiplicity == List((3, 2), (5, 1), (7, 1)))
   }
   test("P37") {
+    //assert(0.totient2 == 0)
     assert(10.totient2 == 4)
     check {
-      Prop.forAll(Gen.choose(1, 100)) { x =>
+      Prop.forAll(Gen.choose(10, 100)) { x =>
         x.totient() == x.totient2()
       }
     }
@@ -95,6 +96,21 @@ class MathTest extends FunSuite with Checkers {
   }
 
   test("P40") {
-    assert(28.goldbach == (5, 23))
+    assert(4.goldbach contains (1, 3))
+    assert(6.goldbach contains (1, 5))
+    assert(28.goldbach contains (5, 23))
+  }
+
+  test("P41") {
+    //pending
+    val res: List[List[(Int, Int)]] = goldbachList(9, 20)
+    assert(res.size == 6)
+    assert(res.head contains (3, 7))
+    assert(res.last contains (3, 17))
+    //pending
+    val res2 = goldbachListLimited(3, 2000, 50)
+
+    assert(res2.filter(_ contains (73, 919)).size == 1)
+    assert(res2.filter(_ contains (61, 1867)).size == 1)
   }
 }

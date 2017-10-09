@@ -4,7 +4,15 @@ import scala.language.implicitConversions
 
 object MathOne extends Log {
   class IntHelp(n: Int) {
-    require(n >= 0)
+    require(n > 0)
+
+    def isPrime2(): Boolean = {
+      val max: Int = Math.sqrt(n).toInt + 1
+      val li = (2 until max).map(x => n % x == 0)
+      //debug(s"n=${n}\tli=${li}")
+      val res: Boolean = !li.exists(x => x)
+      res
+    }
     def isPrime(): (Boolean, Seq[Int]) = {
 
       val res: Seq[(Int, Boolean)] = for (i <- 1 to n) yield {
@@ -57,12 +65,13 @@ object MathOne extends Log {
         case x => pow(p, m - 1, p * res)
       }
     }
-    def goldbach(): (Int, Int) = {
+    def goldbach(): List[(Int,Int)] = {
+      debug { s"n=${n}" }
       require(n > 0 && n % 2 == 0)
-      val xs  = listPrimesinRange(1,n)
+      val xs = listPrimesinRange(1, n)
       val ys = P0828.combinations(2, xs)
-      val zs = ys.filter( _.sum == n).head
-      (zs.head, zs.tail.head)
+      val zs = ys.filter(_.sum == n)
+      zs.map{ xs => (xs.head,xs.last)}
     }
   }
 
@@ -91,7 +100,13 @@ object MathOne extends Log {
   }
 
   def listPrimesinRange(a: Int, b: Int): List[Int] = {
-    (a to b).filter(_.isPrime()._1).toList
+    (a to b).filter(_.isPrime2()).toList
   }
 
+  def goldbachList(a: Int, b: Int): List[List[(Int, Int)]] = {
+    (a to b).filter(_ % 2 == 0).map { _.goldbach }.toList
+  }
+  def goldbachListLimited(a: Int, b: Int, m: Int): List[List[(Int, Int)]] = {
+    goldbachList(a, b).map( xs => xs.filter( p => p._1 > m)).filter( !_.isEmpty)
+  }
 }
