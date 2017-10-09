@@ -10,6 +10,10 @@ object P0828 {
     logger.debug(s"${name.value}:${line.value} ${arg}")
   }
 
+  def trace(arg: String)(implicit line: sourcecode.Line, name: sourcecode.FullName) = {
+    logger.trace(s"${name.value}:${line.value} ${arg}")
+  }
+
   def compress[A](xs: List[A]): List[A] = xs match {
     case Nil                          => Nil
     case y1 :: Nil                    => List(y1)
@@ -330,24 +334,21 @@ object P0828 {
       case (List(a), _) => List(List(xs))
       case (a :: as, xs) =>
         val s1: List[List[A]] = combinations(a, xs)
-        debug(s"s1=${s1}")
+        trace(s"s1=${s1}")
         val tmp = s1.flatMap { s =>
           val others = xs.filterNot(s.contains(_))
           val s2: List[List[List[A]]] = group(as, others)
-          debug(s"s2=${s2}")
+          trace(s"s2=${s2}")
           val s3: List[List[List[A]]] = s2.map { x => s :: x }
 
-          debug(s"s3.size=${s3.size}")
-          debug(s"s3=${s3}")
+          trace(s"s3.size=${s3.size}")
+          trace(s"s3=${s3}")
           s3
 
         }
-        val tmp2 = tmp.distinct
-        debug(s"tmp2=${tmp2.mkString("\n", "\n", "\n")}")
-        tmp2
-
+        tmp
     }
-
+    debug(s"res=${res.mkString("\n", "\n", "\n")}")
     res
   }
 
