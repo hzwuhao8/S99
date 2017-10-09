@@ -78,4 +78,7 @@ class MathTest extends FunSuite with Checkers {
   test("P35"){
     assert( 315.primeFactors == List(3, 3, 5, 7))
   }
+  test("P36"){
+    assert( 315.primeFactorMultiplicity ==  List((3,2), (5,1), (7,1)) ) 
+  }
 }

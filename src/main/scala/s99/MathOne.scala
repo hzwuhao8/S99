@@ -32,10 +32,14 @@ object MathOne extends Log {
             List(x)
           } else {
             val a = tmp.tail.head
-            List(a) ::: (x/a).primeFactors
+            List(a) ::: (x / a).primeFactors
           }
 
       }
+    }
+
+    def primeFactorMultiplicity(): List[(Int, Int)] = {
+      P0828.encode(primeFactors).map{ p => (p._2, p._1)}
     }
   }
 
