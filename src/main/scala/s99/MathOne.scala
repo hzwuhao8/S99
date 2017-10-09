@@ -39,7 +39,23 @@ object MathOne extends Log {
     }
 
     def primeFactorMultiplicity(): List[(Int, Int)] = {
-      P0828.encode(primeFactors).map{ p => (p._2, p._1)}
+      P0828.encode(primeFactors).map { p => (p._2, p._1) }
+    }
+
+    def totient2(): Int = {
+      val res = primeFactorMultiplicity().map { t =>
+        val (p, m) = t
+        (p - 1) * (pow(p, m - 1, 1))
+      }
+      res.product
+    }
+
+    def pow(p: Int, m: Int, res: Int): Int = {
+      m match {
+        case 0 => res
+        case 1 => p * res
+        case x => pow(p, m - 1, p * res)
+      }
     }
   }
 

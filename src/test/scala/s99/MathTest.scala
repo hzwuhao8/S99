@@ -72,13 +72,21 @@ class MathTest extends FunSuite with Checkers {
   }
 
   test("P34 Calculate Euler's totient function phi(m).") {
-    assert ( 10.totient == 4 )
+    assert(10.totient == 4)
   }
-  
-  test("P35"){
-    assert( 315.primeFactors == List(3, 3, 5, 7))
+
+  test("P35") {
+    assert(315.primeFactors == List(3, 3, 5, 7))
   }
-  test("P36"){
-    assert( 315.primeFactorMultiplicity ==  List((3,2), (5,1), (7,1)) ) 
+  test("P36") {
+    assert(315.primeFactorMultiplicity == List((3, 2), (5, 1), (7, 1)))
+  }
+  test("P37") {
+    assert(10.totient2 == 4)
+    check {
+      Prop.forAll(Gen.choose(1, 100)) { x =>
+        x.totient() == x.totient2()
+      }
+    }
   }
 }
