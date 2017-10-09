@@ -17,6 +17,26 @@ object MathOne extends Log {
         (false, res1.map { _._1 })
       }
     }
+
+    def isCoprimeTo(b: Int) = gcd(n, b) == 1
+
+    def totient(): Int = {
+      (1 to n).filter(_.isCoprimeTo(n)).length
+    }
+    def primeFactors(): List[Int] = {
+      debug(s"n=${n}")
+      n match {
+        case x =>
+          val (flag, tmp) = x.isPrime()
+          if (flag) {
+            List(x)
+          } else {
+            val a = tmp.tail.head
+            List(a) ::: (x/a).primeFactors
+          }
+
+      }
+    }
   }
 
   implicit def int2Help(n: Int): IntHelp = new IntHelp(n)
