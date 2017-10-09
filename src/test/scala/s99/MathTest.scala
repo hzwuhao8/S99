@@ -21,9 +21,14 @@ class MathTest extends FunSuite with Checkers {
       if(res._1){
         res._1
       }else{
-        x % res._2.get == 0 
+        x % res._2.head == 0 
       }
     }
   }
   
+  test("P32  gcd"){
+    check{ (a:Int,b:Int)=> 
+      gcdA(a,b) == gcd(a,b)  
+    }
+  }
 }
