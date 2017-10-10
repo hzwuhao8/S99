@@ -23,4 +23,28 @@ class LogicTest extends FunSuite with Checkers {
     debug(s"res=\n${res}")
     assert(table2(f1) == table2(f2))
   }
+
+  test("P48") {
+    assert(gray(1) == List("0", "1"))
+    assert(gray(2) == List("00", "01", "10", "11"))
+    val res = gray(4)
+    assert(res.size == Math.pow(2, 4))
+    val g = Gen.choose(0, 1)
+    val g4 = for {
+      a <- g
+      b <- g
+      c <- g
+      d <- g
+    } yield {
+      "" + a + b + c + d
+    }
+    check {
+      Prop.forAll(g4) { s =>
+        debug(s"s=${s}")
+        res.contains(s)
+      }
+    }
+    assert(res.contains("0100"))
+
+  }
 }

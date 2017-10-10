@@ -26,6 +26,19 @@ object Logic extends Log {
 
     head + res.mkString
   }
+  
+  def gray(n: Int): List[String]= {
+    n match{
+      case 1 => List("0","1")
+      case n => 
+        val tmp = gray(n-1)
+        val tmp1 = tmp.map{x => "0" + x}
+        val tmp2 = tmp.map{x => "1" + x}
+        tmp1 ++ tmp2
+    }
+  }
+  
+  
 }
 class Logic(a: Boolean) {
   import Logic.not
