@@ -38,7 +38,33 @@ class BTreeTest extends FunSuite with Checkers with Log {
       val t1 = Node(2, End, Node(4))
       val t2 = Node(2, End, Node(3))
       val tree2 = Node(1, t1, t2)
-      assert(Tree.isSymmetric(tree2) == false ) 
+      assert(Tree.isSymmetric(tree2) == false)
     }
+  }
+
+  test("P58 ") {
+    val res = Tree.symmetricBalancedTrees(5, 'x)
+    debug(s"res=\n${res.mkString("\n")}")
+  }
+
+  test("P61") {
+    assert(Tree.leafCount(End) == 0)
+    assert(Tree.leafCount(Node(1)) == 1)
+    assert(Tree.leafCount(Node(1, Node(1), Node(1))) == 2)
+  }
+
+  test("P61A") {
+    check { (xs: List[Byte]) =>
+      val t = Tree.fromList(xs)
+      val c1 = Tree.leafCount(t)
+      val l1 = Tree.leafList(t)
+      c1 == l1.size
+    }
+  }
+  
+  test("p62"){
+    val t = Node('a', Node('b'), Node('c', Node('d'), Node('e')))
+    assert( Tree.internalList(t) == List('a','c') )
+    
   }
 }

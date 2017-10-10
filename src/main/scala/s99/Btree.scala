@@ -98,4 +98,31 @@ object Tree extends Log {
       case a :: as => addValue(fromList(as), a)
     }
   }
+
+  def symmetricBalancedTrees[A](n: Int, x: A): List[Tree[A]] = {
+    cBalanced(n, x).filter(isSymmetric(_))
+  }
+
+  def leafCount[A](x: Tree[A]): Int = {
+    x match {
+      case End               => 0
+      case Node(_, End, End) => 1
+      case Node(_, l, r)     => leafCount(l) + leafCount(r)
+    }
+  }
+
+  def leafList[A](t: Tree[A]): List[A] = t match {
+    case End               => Nil
+    case Node(x, End, End) => List(x)
+    case Node(_, l, r)     => leafList(l) ::: leafList(r)
+  }
+
+  def internalList[A](t: Tree[A]): List[A] = t match {
+    case End => Nil
+    case Node(x, End, End) => Nil
+    case Node(x, Node(_, End, End), End) => List(x)
+    case Node(x, End, Node(_, End, End)) => List(x)
+    case Node(x, Node(y, End, End), Node(z, End, End)) => List(x)
+    case Node(x, l, r) => x :: internalList(l) ::: internalList(r)
+  }
 }
