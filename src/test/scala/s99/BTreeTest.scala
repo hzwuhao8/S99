@@ -17,9 +17,9 @@ class BTreeTest extends FunSuite with Checkers  with Log{
 //    debug(s"res=${res2}")
     
     val res3 = Tree.cBalanced(3, 'a')
-    debug(s"res=\n${res3.mkString("\n")}")
+    info(s"res=\n${res3.mkString("\n")}")
     
      val res4 = Tree.cBalanced(4, 'a')
-    debug(s"res=\n${res4.mkString("\n")}")
+    info(s"res=\n${res4.mkString("\n")}")
   }
 }
