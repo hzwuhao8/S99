@@ -18,8 +18,8 @@ object Tree extends Log {
     trace(s"t={$tree}")
     val res = tree match {
       case End => List(Node(value, End, End))
-//      case Node(v1, End, End) =>
-//        List(Node(v1, Node(value), End), Node(v1, End, Node(value)))
+      //      case Node(v1, End, End) =>
+      //        List(Node(v1, Node(value), End), Node(v1, End, Node(value)))
       case Node(v1, left, right) =>
         val lsize = size(left)
         val rsize = size(right)
@@ -58,6 +58,25 @@ object Tree extends Log {
         val tmp = cBalanced(n - 1, value)
         tmp.flatMap { t => merger(value, t) }
 
+    }
+  }
+
+  def isMirrorOf[A](left: Tree[A], right: Tree[A]): Boolean = {
+    (left, right) match {
+      case (End, End) => true
+      case (Node(_, End, End), Node(_, End, End)) => true
+      case (Node(_, Node(_, End, End), End), Node(_, End, Node(_, End, End))) => true
+      case (Node(_, l1, r1), Node(_, l2, r2)) => isMirrorOf(l1, r2) && isMirrorOf(r1, l2)
+      case _ => false
+    }
+  }
+
+  def isSymmetric[A](t: Tree[A]): Boolean = {
+    t match {
+      case End => true
+      case Node(_, End, End) => true
+      case Node(_, l, r)     => isMirrorOf(l, r)
+      
     }
   }
 }
