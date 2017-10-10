@@ -87,6 +87,7 @@ object Huffman extends Log {
     go(tree, v, "")
   }
 
+  @scala.annotation.tailrec
   def merge[A](xs: List[(Tree[A], Int)]): List[(Tree[A], Int)] = {
     debug(s"xs=${xs}")
     xs match {
