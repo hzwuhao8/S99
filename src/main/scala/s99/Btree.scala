@@ -1,6 +1,8 @@
 package s99
 
-sealed abstract class Tree[+T]
+sealed abstract class Tree[+T] {
+
+}
 
 case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T]
 
@@ -73,10 +75,27 @@ object Tree extends Log {
 
   def isSymmetric[A](t: Tree[A]): Boolean = {
     t match {
-      case End => true
+      case End               => true
       case Node(_, End, End) => true
       case Node(_, l, r)     => isMirrorOf(l, r)
-      
+
+    }
+  }
+
+  def addValue[U <% Ordered[U]](t: Tree[U], v: U): Tree[U] = {
+    debug(s"T=${t}\tv=${v}")
+    t match {
+      case End               => Node(v)
+      case Node(x, End, End) => if (x > v) Node(x, Node(v), End) else Node(x, End, Node(v))
+      case Node(x, l, r)     => if (x > v) Node(x, addValue(l, v), r) else Node(x, l, addValue(r, v))
+    }
+  }
+
+  def fromList[A <% Ordered[A]](xs: List[A]): Tree[A] = {
+    debug(s"xs={$xs}")
+    xs match {
+      case Nil     => End
+      case a :: as => addValue(fromList(as), a)
     }
   }
 }
