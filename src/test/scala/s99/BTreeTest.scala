@@ -67,4 +67,9 @@ class BTreeTest extends FunSuite with Checkers with Log {
     assert( Tree.internalList(t) == List('a','c') )
     
   }
+  
+  test("p62B"){
+    val t = Node('a', Node('b'), Node('c', Node('d'), Node('e')))
+    assert( Tree.atLevel(t,2) == List('b','c') )
+  }
 }

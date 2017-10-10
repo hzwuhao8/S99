@@ -125,4 +125,17 @@ object Tree extends Log {
     case Node(x, Node(y, End, End), Node(z, End, End)) => List(x)
     case Node(x, l, r) => x :: internalList(l) ::: internalList(r)
   }
+  
+  def atLevel[A](t: Tree[A], level: Int): List[A] = {
+     val res = countLevel(t,1)
+     res.filter(_._2 == level).map{ _._1}
+  }
+  
+  def countLevel[A](t: Tree[A],level:Int): List[(A,Int)] = {
+    t match{
+      case End => Nil
+      case Node(x,End,End) => List( (x,level)) 
+      case Node(x,l,r) => (x,level) :: countLevel(l, level+1) ::: countLevel(r,level+1)
+    }
+  }
 }
