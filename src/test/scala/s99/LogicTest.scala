@@ -48,3 +48,45 @@ class LogicTest extends FunSuite with Checkers {
 
   }
 }
+
+class HuffmanTest extends FunSuite with Checkers {
+  import Huffman._
+
+//  test("empty tree contains nothing") {
+//    val tree = End
+//    check { (x: Byte) => contains(tree, x) == false }
+//  }
+
+  test("one leaf tree contains one ") {
+    check { (x: Char) =>
+      val tree = Leaf(x)
+      contains(tree, x) && contains(tree, x + 1) == false
+    }
+  }
+
+  test("Tree((a,b),(c)) contains c ") {
+    val tree = Branch(Branch(Leaf('a'), Leaf('b')), Leaf('c'))
+    assert(contains(tree, 'c'))
+    assert(contains(tree, 'd') == false)
+  }
+
+  test("encode simple tree (a,b)") {
+    assert(encode(Branch(Leaf('a'), Leaf('b')), 'a') == "0")
+    assert(encode(Branch(Leaf('a'), Leaf('b')), 'b') == "1")
+  }
+  test(""){
+    val l = List( ("a",5),("b",4),("c",3),("d",2),("e",1))
+    val fre = l.sortBy(_._2).map { p => (Leaf(p._1), p._2) }
+    val m = merge(fre)
+    debug(s"m=\n${m}")
+    debug(codify(m.head._1).mkString)
+  }
+  test("merge") {
+    val l = List(("a", 45), ("b", 13), ("c", 12), ("d", 16), ("e", 9), ("f", 5))
+    val fre = l.sortBy(_._2).map { p => (Leaf(p._1), p._2) }
+    val m = merge(fre)
+    debug(s"m=\n${m}")
+    debug(codify(m.head._1).mkString)
+  }
+
+}
