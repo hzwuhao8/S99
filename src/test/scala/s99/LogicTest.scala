@@ -74,12 +74,13 @@ class HuffmanTest extends FunSuite with Checkers {
     assert(encode(Branch(Leaf('a'), Leaf('b')), 'a') == "0")
     assert(encode(Branch(Leaf('a'), Leaf('b')), 'b') == "1")
   }
-  test(""){
+  test("simple example"){
     val l = List( ("a",5),("b",4),("c",3),("d",2),("e",1))
     val fre = l.sortBy(_._2).map { p => (Leaf(p._1), p._2) }
     val m = merge(fre)
     debug(s"m=\n${m}")
     debug(codify(m.head._1).mkString)
+    assert(encode( m.head._1, "a") == "11" )
   }
   test("merge") {
     val l = List(("a", 45), ("b", 13), ("c", 12), ("d", 16), ("e", 9), ("f", 5))
@@ -87,6 +88,7 @@ class HuffmanTest extends FunSuite with Checkers {
     val m = merge(fre)
     debug(s"m=\n${m}")
     debug(codify(m.head._1).mkString)
+    assert(encode( m.head._1, "a") == "0" )
   }
 
 }
