@@ -125,17 +125,37 @@ object Tree extends Log {
     case Node(x, Node(y, End, End), Node(z, End, End)) => List(x)
     case Node(x, l, r) => x :: internalList(l) ::: internalList(r)
   }
-  
+
   def atLevel[A](t: Tree[A], level: Int): List[A] = {
-     val res = countLevel(t,1)
-     res.filter(_._2 == level).map{ _._1}
+    val res = countLevel(t, 1)
+    res.filter(_._2 == level).map { _._1 }
   }
-  
-  def countLevel[A](t: Tree[A],level:Int): List[(A,Int)] = {
-    t match{
-      case End => Nil
-      case Node(x,End,End) => List( (x,level)) 
-      case Node(x,l,r) => (x,level) :: countLevel(l, level+1) ::: countLevel(r,level+1)
+
+  def countLevel[A](t: Tree[A], level: Int): List[(A, Int)] = {
+    t match {
+      case End               => Nil
+      case Node(x, End, End) => List((x, level))
+      case Node(x, l, r)     => (x, level) :: countLevel(l, level + 1) ::: countLevel(r, level + 1)
     }
+  }
+
+  def hight[A](t: Tree[A]): Int = t match {
+    case End               => 0
+    case Node(_, End, End) => 1
+    case Node(_, l, r)     => Math.max(hight(l), hight(r)) + 1
+  }
+
+  def isHbalance[A](t: Tree[A]): Boolean = t match {
+    case End               => true
+    case Node(_, End, End) => true
+    case Node(_, l, r)     => Math.abs(hight(l) - hight(r)) <= 1
+  }
+
+  def minHbalNodes(n: Int): Int = n match {
+    case 0 => 0
+    case 1 => 1
+    case 2 => 2
+    case n =>
+      1 + minHbalNodes(n - 1) + minHbalNodes(n - 2)
   }
 }

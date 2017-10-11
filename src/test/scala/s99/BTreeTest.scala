@@ -46,6 +46,11 @@ class BTreeTest extends FunSuite with Checkers with Log {
     val res = Tree.symmetricBalancedTrees(5, 'x)
     debug(s"res=\n${res.mkString("\n")}")
   }
+  
+  test("P60"){
+    assert( Tree.minHbalNodes(3) == 4 )
+    assert( Tree.minHbalNodes(4) == 7 )
+  }
 
   test("P61") {
     assert(Tree.leafCount(End) == 0)
