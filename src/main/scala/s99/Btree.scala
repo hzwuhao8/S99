@@ -151,11 +151,20 @@ object Tree extends Log {
     case Node(_, l, r)     => Math.abs(hight(l) - hight(r)) <= 1
   }
 
-  def minHbalNodes(n: Int): Int = n match {
+  def maxHbalNodes(height: Int): Int = 2 * height - 1
+
+  def minHbalNodes(height: Int): Int = height match {
     case 0 => 0
     case 1 => 1
     case 2 => 2
-    case n =>
-      1 + minHbalNodes(n - 1) + minHbalNodes(n - 2)
+    case h =>
+      1 + minHbalNodes(h - 1) + minHbalNodes(h - 2)
   }
+
+  def minHbalHeight(nodes: Int): Int =
+    if (nodes == 0) 0
+    else minHbalHeight(nodes / 2) + 1
+
+  def maxHbalHeight(nodes: Int): Int = Stream.from(1).takeWhile(minHbalNodes(_) <= nodes).last
+
 }
