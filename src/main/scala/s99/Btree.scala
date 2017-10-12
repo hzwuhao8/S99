@@ -1,13 +1,28 @@
 package s99
 
 sealed abstract class Tree[+T] {
-
+  def layoutBinaryTree: Tree[T] = layoutBinaryTreeInternal(1, 1)._1
+  def layoutBinaryTreeInternal(x: Int, depth: Int): (Tree[T], Int)
 }
 
-case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T]
+case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
+  def layoutBinaryTreeInternal(x: Int, depth: Int): (Tree[T], Int) = {
+    val (leftTree, myX) = left.layoutBinaryTreeInternal(x, depth + 1)
+    val (rightTree, nextX) = right.layoutBinaryTreeInternal(myX + 1, depth + 1)
+    (PositionedNode(value, leftTree, rightTree, myX, depth), nextX)
+  }
+}
+
+case class PositionedNode[+T](value: T, left: Tree[T], right: Tree[T], x: Int, y: Int) extends Tree[T] {
+  override def toString = "T[" + x.toString + "," + y.toString + "](" + value.toString + " " + left.toString + " " + right.toString + ")"
+  def layoutBinaryTreeInternal(x: Int, depth: Int): (Tree[T], Int)={
+    (this,x)
+  }
+}
 
 case object End extends Tree[Nothing] {
   override def toString = "."
+  def layoutBinaryTreeInternal(x: Int, depth: Int) = (End, x)
 }
 
 object Node {

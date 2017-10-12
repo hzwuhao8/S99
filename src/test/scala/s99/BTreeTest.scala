@@ -77,4 +77,9 @@ class BTreeTest extends FunSuite with Checkers with Log {
     val t = Node('a', Node('b'), Node('c', Node('d'), Node('e')))
     assert( Tree.atLevel(t,2) == List('b','c') )
   }
+  
+  test("P64"){
+    val res = Node('a', Node('b', End, Node('c')), Node('d')).layoutBinaryTree
+    debug(s"res=$res")
+  }
 }
