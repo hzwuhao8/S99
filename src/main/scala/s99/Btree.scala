@@ -15,8 +15,8 @@ case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
 
 case class PositionedNode[+T](value: T, left: Tree[T], right: Tree[T], x: Int, y: Int) extends Tree[T] {
   override def toString = "T[" + x.toString + "," + y.toString + "](" + value.toString + " " + left.toString + " " + right.toString + ")"
-  def layoutBinaryTreeInternal(x: Int, depth: Int): (Tree[T], Int)={
-    (this,x)
+  def layoutBinaryTreeInternal(x: Int, depth: Int): (Tree[T], Int) = {
+    throw new RuntimeException("Not Exec")
   }
 }
 
@@ -56,15 +56,17 @@ object Tree extends Log {
         val l1 = leftList.map { newleft => Node(v1, newleft, right) }
         val l2 = rightList.map { newright => Node(v1, left, newright) }
         l1 ::: l2
+      case x: PositionedNode[A] => throw new RuntimeException("Must not reach here!")
     }
     trace(s"res=\n${res.mkString("\n")}")
     res
   }
 
   def size[A](t: Tree[A]): Int = t match {
-    case End               => 0
-    case Node(_, End, End) => 1
-    case Node(_, l, r)     => size(l) + size(r)
+    case End                  => 0
+    case Node(_, End, End)    => 1
+    case Node(_, l, r)        => size(l) + size(r)
+    case x: PositionedNode[A] => throw new RuntimeException("Must not reach here!")
   }
 
   def cBalanced[A](n: Int, value: A): List[Tree[A]] = {
@@ -90,19 +92,20 @@ object Tree extends Log {
 
   def isSymmetric[A](t: Tree[A]): Boolean = {
     t match {
-      case End               => true
-      case Node(_, End, End) => true
-      case Node(_, l, r)     => isMirrorOf(l, r)
-
+      case End                  => true
+      case Node(_, End, End)    => true
+      case Node(_, l, r)        => isMirrorOf(l, r)
+      case x: PositionedNode[A] => throw new RuntimeException("Must not reach here!")
     }
   }
 
   def addValue[U <% Ordered[U]](t: Tree[U], v: U): Tree[U] = {
     debug(s"T=${t}\tv=${v}")
     t match {
-      case End               => Node(v)
-      case Node(x, End, End) => if (x > v) Node(x, Node(v), End) else Node(x, End, Node(v))
-      case Node(x, l, r)     => if (x > v) Node(x, addValue(l, v), r) else Node(x, l, addValue(r, v))
+      case End                  => Node(v)
+      case Node(x, End, End)    => if (x > v) Node(x, Node(v), End) else Node(x, End, Node(v))
+      case Node(x, l, r)        => if (x > v) Node(x, addValue(l, v), r) else Node(x, l, addValue(r, v))
+      case x: PositionedNode[U] => throw new RuntimeException("Must not reach here!")
     }
   }
 
@@ -120,16 +123,18 @@ object Tree extends Log {
 
   def leafCount[A](x: Tree[A]): Int = {
     x match {
-      case End               => 0
-      case Node(_, End, End) => 1
-      case Node(_, l, r)     => leafCount(l) + leafCount(r)
+      case End                  => 0
+      case Node(_, End, End)    => 1
+      case Node(_, l, r)        => leafCount(l) + leafCount(r)
+      case x: PositionedNode[A] => throw new RuntimeException("Must not reach here!")
     }
   }
 
   def leafList[A](t: Tree[A]): List[A] = t match {
-    case End               => Nil
-    case Node(x, End, End) => List(x)
-    case Node(_, l, r)     => leafList(l) ::: leafList(r)
+    case End                  => Nil
+    case Node(x, End, End)    => List(x)
+    case Node(_, l, r)        => leafList(l) ::: leafList(r)
+    case x: PositionedNode[A] => throw new RuntimeException("Must not reach here!")
   }
 
   def internalList[A](t: Tree[A]): List[A] = t match {
@@ -139,6 +144,7 @@ object Tree extends Log {
     case Node(x, End, Node(_, End, End)) => List(x)
     case Node(x, Node(y, End, End), Node(z, End, End)) => List(x)
     case Node(x, l, r) => x :: internalList(l) ::: internalList(r)
+    case x: PositionedNode[A] => throw new RuntimeException("Must not reach here!")
   }
 
   def atLevel[A](t: Tree[A], level: Int): List[A] = {
@@ -148,22 +154,25 @@ object Tree extends Log {
 
   def countLevel[A](t: Tree[A], level: Int): List[(A, Int)] = {
     t match {
-      case End               => Nil
-      case Node(x, End, End) => List((x, level))
-      case Node(x, l, r)     => (x, level) :: countLevel(l, level + 1) ::: countLevel(r, level + 1)
+      case End                  => Nil
+      case Node(x, End, End)    => List((x, level))
+      case Node(x, l, r)        => (x, level) :: countLevel(l, level + 1) ::: countLevel(r, level + 1)
+      case x: PositionedNode[A] => throw new RuntimeException("Must not reach here!")
     }
   }
 
   def hight[A](t: Tree[A]): Int = t match {
-    case End               => 0
-    case Node(_, End, End) => 1
-    case Node(_, l, r)     => Math.max(hight(l), hight(r)) + 1
+    case End                  => 0
+    case Node(_, End, End)    => 1
+    case Node(_, l, r)        => Math.max(hight(l), hight(r)) + 1
+    case x: PositionedNode[A] => throw new RuntimeException("Must not reach here!")
   }
 
   def isHbalance[A](t: Tree[A]): Boolean = t match {
-    case End               => true
-    case Node(_, End, End) => true
-    case Node(_, l, r)     => Math.abs(hight(l) - hight(r)) <= 1
+    case End                  => true
+    case Node(_, End, End)    => true
+    case Node(_, l, r)        => Math.abs(hight(l) - hight(r)) <= 1
+    case x: PositionedNode[A] => throw new RuntimeException("Must not reach here!")
   }
 
   def maxHbalNodes(height: Int): Int = 2 * height - 1
