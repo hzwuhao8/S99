@@ -191,4 +191,54 @@ object Tree extends Log {
 
   def maxHbalHeight(nodes: Int): Int = Stream.from(1).takeWhile(minHbalNodes(_) <= nodes).last
 
+  def toString[A](t: Tree[A]): String = t match {
+    case End                  => ","
+    case Node(x, End, End)    => x.toString
+    case Node(x, left, End)   => s"${x}(${toString(left)},)"
+    case Node(x, End, right)  => s"${x}(,${toString(right)})"
+    case Node(x, left, right) => s"${x}(${toString(left)},${toString(right)})"
+
+  }
+  def fromString(str: String): Tree[Char] = {
+    debug(s"str=${str}")
+    val res = str.toList match {
+      case Nil                          => End
+      case List(a)                      => Node(a)
+      case List(a, '(', b, ',', c, ')') => Node(a, Node(b), Node(c))
+      case List(f, '(', g, ')')         => Node(f, Node(g), End)
+      case List(f, '(', ',', g, ')')    => Node(f, End, Node(g))
+      case a :: as if (a >= 'a' && a <= 'z') =>
+        val bs = as.map { a =>
+          if (a == '(') {
+            ("(", 1)
+          } else if (a == ')') {
+            (")", -1)
+          } else {
+            (a.toString, 0)
+          }
+        }
+        debug(s"bs=${bs}")
+
+        val cs = bs.scanLeft(("", 0)) { (z, b) =>
+          val res = (z._1 + b._1, z._2 + b._2)
+          debug(s"foldres=${res}")
+          res
+        }
+
+        debug(s"cs=\n${cs.mkString("\n")}")
+        val xa = cs.indexWhere(_._2 > 1)
+        debug(s"xa=${xa}")
+        val xb = cs.indexWhere(_._2 == 1, xa)
+        debug(s"xb=${xb}")
+        val left = as.drop(1).take(xb).init.mkString
+        debug(s"left=${left}")
+        val right = as.drop(xb + 1).init.mkString
+        debug(s"right=${right}")
+        Node(a, fromString(left), fromString(right))
+      case _ => End
+    }
+
+    End
+  }
+
 }

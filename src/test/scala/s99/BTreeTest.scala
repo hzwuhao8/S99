@@ -82,4 +82,13 @@ class BTreeTest extends FunSuite with Checkers with Log {
     val res = Node('a', Node('b', End, Node('c')), Node('d')).layoutBinaryTree
     debug(s"res=$res")
   }
+  
+  test("P67 A string representation of binary trees."){
+    val t = Node('a', Node('b', Node('d'), Node('e')), Node('c', End, Node('f', Node('g'), End)))
+    val res = Tree.toString(t)
+    debug(s"res=${res}")
+    
+    val t2 = Tree.fromString(res)
+  }
+  
 }
