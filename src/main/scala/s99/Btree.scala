@@ -205,40 +205,49 @@ object Tree extends Log {
       case Nil                          => End
       case List(a)                      => Node(a)
       case List(a, '(', b, ',', c, ')') => Node(a, Node(b), Node(c))
-      case List(f, '(', g, ')')         => Node(f, Node(g), End)
+      case List(f, '(', g, ',',')')         => Node(f, Node(g), End)
       case List(f, '(', ',', g, ')')    => Node(f, End, Node(g))
       case a :: as if (a >= 'a' && a <= 'z') =>
-        val bs = as.map { a =>
-          if (a == '(') {
-            ("(", 1)
-          } else if (a == ')') {
-            (")", -1)
-          } else {
-            (a.toString, 0)
-          }
-        }
-        debug(s"bs=${bs}")
+        val (myleft, myright) = as match {
+          case '(' :: ',' :: aas => 
+            val left =""
+            val right = aas.init
+            (left,right.mkString)
+          case _ =>
+          val bs = as.map { a =>
+              if (a == '(') {
+                ("(", 1)
+              } else if (a == ')') {
+                (")", -1)
+              } else {
+                (a.toString, 0)
+              }
+            }
+            debug(s"bs=${bs}")
 
-        val cs = bs.scanLeft(("", 0)) { (z, b) =>
-          val res = (z._1 + b._1, z._2 + b._2)
-          debug(s"foldres=${res}")
-          res
+            val cs = bs.scanLeft(("", 0)) { (z, b) =>
+              val res = (z._1 + b._1, z._2 + b._2)
+              debug(s"foldres=${res}")
+              res
+            }
+
+            debug(s"cs=\n${cs.mkString("\n")}")
+            val xa = cs.indexWhere(_._2 > 1)
+            debug(s"xa=${xa}")
+            val xb = cs.indexWhere(_._2 == 1, xa)
+            debug(s"xb=${xb}")
+            val left = as.drop(1).take(xb).init.mkString
+            debug(s"left=${left}")
+            val right = as.drop(xb + 1).init.mkString
+            debug(s"right=${right}")
+            (left, right)
         }
 
-        debug(s"cs=\n${cs.mkString("\n")}")
-        val xa = cs.indexWhere(_._2 > 1)
-        debug(s"xa=${xa}")
-        val xb = cs.indexWhere(_._2 == 1, xa)
-        debug(s"xb=${xb}")
-        val left = as.drop(1).take(xb).init.mkString
-        debug(s"left=${left}")
-        val right = as.drop(xb + 1).init.mkString
-        debug(s"right=${right}")
-        Node(a, fromString(left), fromString(right))
+        Node(a, fromString(myleft), fromString(myright))
       case _ => End
     }
 
-    End
+    res
   }
 
 }

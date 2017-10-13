@@ -89,6 +89,11 @@ class BTreeTest extends FunSuite with Checkers with Log {
     debug(s"res=${res}")
     
     val t2 = Tree.fromString(res)
+    debug(s"t2=${t2}")
+    val res2 = Tree.toString(t2)
+    debug(s"res2=${res2}")
+    assert(res == res2)
+    
   }
   
 }
