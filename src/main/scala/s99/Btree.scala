@@ -301,30 +301,29 @@ object String2Tree {
 
 object String2TreeWithParboiled2 {
   import org.parboiled2._
+  
   class Calculator2(val input: ParserInput) extends Parser {
     def Alpha = rule { CharPredicate.LowerAlpha }
-    def n0 = rule { capture(Alpha) ~> { (x: String) => Node(x.head) } }
-    def n1 = rule { Alpha ~ "(" ~ "," ~ Alpha ~ ")" }
-    def n1a = rule {
-      capture(n1) ~> {
+    def n0 = rule { capture(Alpha) ~> { (x: String) => s99.Node(x.head) } }
+    def nx = rule{ n0 ~ "(,"~ n0~>{ (y: Node[Char],x:Node[Char]) => y.copy(right=x) } ~  ")"  }
+    def n1 = rule {
+      Alpha ~ "(" ~ "," ~ Alpha ~ ")" ~> {
         (x: String, y: String) =>
-          Node(x.head, s99.End, Node(y.head))
+          s99.Node(x.head, s99.End, s99.Node(y.head))
       }
     }
 
-    def n2 = rule { Alpha ~ "(" ~ Alpha ~ "," ~ ")" }
-    def n2a = rule {
-      capture(n2) ~> {
+    def n2 = rule {
+      Alpha ~ "(" ~ Alpha ~ "," ~ ")" ~> {
         (x: String, y: String) =>
-          Node(x.head, Node(y.head), s99.End)
+          s99.Node(x.head, s99.Node(y.head), s99.End)
       }
     }
 
-    def n3 = rule { Alpha ~ "(" ~ Alpha ~ "," ~ Alpha ~ ")" }
-    def n3a = rule {
-      capture(n3) ~> {
+    def n3 = rule {
+      Alpha ~ "(" ~ Alpha ~ "," ~ Alpha ~ ")" ~> {
         (x: String, y: String, z: String) =>
-          Node(x.head, Node(y.head), Node(z.head))
+          s99.Node(x.head, s99.Node(y.head), s99.Node(z.head))
       }
     }
 
@@ -332,7 +331,7 @@ object String2TreeWithParboiled2 {
 
     //def InputLine = rule { n3a ~ EOI }
   }
-  
+
   class Calculator(val input: ParserInput) extends Parser {
     def InputLine = rule { Expression ~ EOI }
 
