@@ -116,9 +116,18 @@ class BTreeTest extends FunSuite with Checkers with Log {
           val s = Tree.toString(t)
           val t1 = Tree.fromString(s)
           t == t1
-
+          val t3 = Tree.fromStringParse(s)
+          debug(s"t=\n${t}\n")
+          debug(s"t1=\n${t1}\n")
+          debug(s"t3=\n${t3}\n")
+          t1 == t3
       }
     }
+
+    val l1 = ('a' to 'z').toList.reverse
+    val s1 = Tree.toString(Tree.fromList(l1))
+    debug(s"s1=${s1}")
+    assert(Tree.fromStringParse(s1) == Tree.fromString(s1))
 
   }
 

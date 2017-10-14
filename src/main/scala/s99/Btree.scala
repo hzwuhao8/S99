@@ -110,7 +110,7 @@ object Tree extends Log {
   }
 
   def fromList[A <% Ordered[A]](xs: List[A]): Tree[A] = {
-    debug(s"xs={$xs}")
+    trace(s"xs={$xs}")
     xs match {
       case Nil     => End
       case a :: as => addValue(fromList(as), a)
@@ -200,7 +200,7 @@ object Tree extends Log {
 
   }
   def fromString(str: String): Tree[Char] = {
-    debug(s"str=${str}")
+    trace(s"str=${str}")
     if (str.startsWith("(") && str.endsWith(")")) {
       fromString(str.substring(1, str.length() - 1))
     } else {
@@ -230,23 +230,23 @@ object Tree extends Log {
                   (a.toString, 0)
                 }
               }
-              debug(s"bs=${bs}")
+              trace(s"bs=${bs}")
 
               val cs = bs.scanLeft(("", 0)) { (z, b) =>
                 val res = (z._1 + b._1, z._2 + b._2)
-                debug(s"foldres=${res}")
+                trace(s"foldres=${res}")
                 res
               }
 
-              debug(s"cs=\n${cs.mkString("\n")}")
+              trace(s"cs=\n${cs.mkString("\n")}")
               val xa = cs.indexWhere(_._2 > 1)
-              debug(s"xa=${xa}")
+              trace(s"xa=${xa}")
               val xb = cs.indexWhere(_._2 == 1, xa)
-              debug(s"xb=${xb}")
+              trace(s"xb=${xb}")
               val left = as.drop(1).take(xb).init.mkString
-              debug(s"left=${left}")
+              trace(s"left=${left}")
               val right = as.drop(xb + 1).init.mkString
-              debug(s"right=${right}")
+              trace(s"right=${right}")
               (left, right)
           }
 
@@ -258,4 +258,64 @@ object Tree extends Log {
     }
   }
 
+  /**
+   * use fastParse
+   */
+  def fromStringParse(str: String): Tree[Char] = {
+    String2Tree.tt.parse(str).fold({
+      (_, _, _) => s99.End
+    }, {
+      case (x: Tree[Char], i: Int) => x
+    })
+
+     
+  }
+
+}
+
+object String2Tree {
+  import fastparse.all._
+  val cc: P[Char] = P(CharIn('a' to 'z').!.map(_.head))
+  //val parens: P[Tree[Char]] = P(cc ~ "(" ~/ tt ~ "," ~ tt ~ ")")
+
+  val n0: P[Tree[Char]] = P(cc).map { c =>
+    Node(c)
+  }
+
+  val n1: P[Tree[Char]] = P(cc ~ "(" ~ "," ~ tt ~ ")").map { p =>
+    Node(p._1, s99.End, p._2)
+  }
+  val n2: P[Tree[Char]] = P(cc ~ "(" ~ tt ~ "," ~ ")").map { p =>
+    Node(p._1, p._2, s99.End)
+  }
+  val n3: P[Tree[Char]] = P(cc ~ "(" ~ tt ~ "," ~ tt ~ ")").map { p =>
+    Node(p._1, p._2, p._3)
+  }
+
+  val n4 = P(cc ~ "(" ~ n0 ~ "," ~ n0 ~ ")")
+
+  val tt: P[Tree[Char]] = P(n1 | n2 | n3 | n0)
+
+}
+object Example {
+  import fastparse.all._
+  def eval(tree: (Int, Seq[(String, Int)])) = {
+    val (base, ops) = tree
+    ops.foldLeft(base) {
+      case (left, (op, right)) => op match {
+        case "+" => left + right
+        case "-" => left - right
+        case "*" => left * right
+        case "/" => left / right
+      }
+    }
+  }
+
+  val number: P[Int] = P(CharIn('0' to '9').rep(1).!.map(_.toInt))
+  val parens: P[Int] = P("(" ~/ addSub ~ ")")
+  val factor: P[Int] = P(number | parens)
+
+  val divMul: P[Int] = P(factor ~ (CharIn("*/").! ~/ factor).rep).map(eval)
+  val addSub: P[Int] = P(divMul ~ (CharIn("+-").! ~/ divMul).rep).map(eval)
+  val expr: P[Int] = P(addSub ~ fastparse.all.End)
 }
