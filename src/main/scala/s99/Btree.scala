@@ -294,29 +294,67 @@ object String2Tree {
   val n4 = P(cc ~ "(" ~ n0 ~ "," ~ n0 ~ ")")
 
   val tt: P[Tree[Char]] = P(n1 | n2 | n3 | n0)
-  
+
   val ttWithEnd: P[Tree[Char]] = P(tt ~ fastparse.all.End)
-  
+
 }
-object Example {
-  import fastparse.all._
-  def eval(tree: (Int, Seq[(String, Int)])) = {
-    val (base, ops) = tree
-    ops.foldLeft(base) {
-      case (left, (op, right)) => op match {
-        case "+" => left + right
-        case "-" => left - right
-        case "*" => left * right
-        case "/" => left / right
+
+object String2TreeWithParboiled2 {
+  import org.parboiled2._
+  class Calculator2(val input: ParserInput) extends Parser {
+    def Alpha = rule { CharPredicate.LowerAlpha }
+    def n0 = rule { capture(Alpha) ~> { (x: String) => Node(x.head) } }
+    def n1 = rule { Alpha ~ "(" ~ "," ~ Alpha ~ ")" }
+    def n1a = rule {
+      capture(n1) ~> {
+        (x: String, y: String) =>
+          Node(x.head, s99.End, Node(y.head))
       }
     }
+
+    def n2 = rule { Alpha ~ "(" ~ Alpha ~ "," ~ ")" }
+    def n2a = rule {
+      capture(n2) ~> {
+        (x: String, y: String) =>
+          Node(x.head, Node(y.head), s99.End)
+      }
+    }
+
+    def n3 = rule { Alpha ~ "(" ~ Alpha ~ "," ~ Alpha ~ ")" }
+    def n3a = rule {
+      capture(n3) ~> {
+        (x: String, y: String, z: String) =>
+          Node(x.head, Node(y.head), Node(z.head))
+      }
+    }
+
+    def nn = rule { n1 | n2 | n3 | n0 }
+
+    //def InputLine = rule { n3a ~ EOI }
   }
+  
+  class Calculator(val input: ParserInput) extends Parser {
+    def InputLine = rule { Expression ~ EOI }
 
-  val number: P[Int] = P(CharIn('0' to '9').rep(1).!.map(_.toInt))
-  val parens: P[Int] = P("(" ~/ addSub ~ ")")
-  val factor: P[Int] = P(number | parens)
+    def Expression: Rule1[Int] = rule {
+      Term ~ zeroOrMore(
+        '+' ~ Term ~> ((_: Int) + _)
+          | '-' ~ Term ~> ((_: Int) - _))
+    }
 
-  val divMul: P[Int] = P(factor ~ (CharIn("*/").! ~/ factor).rep).map(eval)
-  val addSub: P[Int] = P(divMul ~ (CharIn("+-").! ~/ divMul).rep).map(eval)
-  val expr: P[Int] = P(addSub ~ fastparse.all.End)
+    def Term = rule {
+      Factor ~ zeroOrMore(
+        '*' ~ Factor ~> ((_: Int) * _)
+          | '/' ~ Factor ~> ((_: Int) / _))
+    }
+
+    def Factor = rule { Number | Parens }
+
+    def Parens = rule { '(' ~ Expression ~ ')' }
+
+    def Number = rule { capture(Digits) ~> (_.toInt) }
+
+    def Digits = rule { oneOrMore(CharPredicate.Digit) }
+
+  }
 }
