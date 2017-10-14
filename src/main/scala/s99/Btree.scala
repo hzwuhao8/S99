@@ -284,6 +284,16 @@ object Tree extends Log {
       }
     }
   }
+
+  def preorder[A](t: Tree[A]): List[A] = t match {
+    case End                  => Nil
+    case Node(x, left, right) => List(x) ::: preorder(left) ::: preorder(right)
+  }
+
+  def inOrder[A](t: Tree[A]): List[A] = t match {
+    case End                  => Nil
+    case Node(x, left, right) => inOrder(left) ::: List(x) ::: inOrder(right)
+  }
 }
 
 object String2Tree {

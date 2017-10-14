@@ -122,7 +122,7 @@ class BTreeTest extends FunSuite with Checkers with Log {
           debug(s"t3=\n${t3}\n")
           t1 == t3
 
-          val t4: Tree[Char] =Tree.fromStringUseParboiled(s)
+          val t4: Tree[Char] = Tree.fromStringUseParboiled(s)
 
           t == t1 && t1 == t3 && t4 == t3
       }
@@ -135,4 +135,14 @@ class BTreeTest extends FunSuite with Checkers with Log {
 
   }
 
+  test("P68") {
+    val s = "a(b(d,e),c(,f(g,)))"
+    val t = Tree.fromString(s)
+    val l = Tree.preorder(t)
+    assert(l == List('a', 'b', 'd', 'e', 'c', 'f', 'g'))
+
+    val l2 = Tree.inOrder(t)
+    assert(l2 == List('d', 'b', 'e', 'a', 'c', 'g', 'f'))
+
+  }
 }
