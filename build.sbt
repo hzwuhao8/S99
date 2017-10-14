@@ -25,6 +25,8 @@ libraryDependencies += "com.lihaoyi" %% "sourcecode" % "0.1.4"
 
 libraryDependencies += "com.lihaoyi" %% "fastparse" % "0.4.4"
 
+libraryDependencies += "org.parboiled" %% "parboiled" % "2.1.4"
+
 libraryDependencies ++= Seq(
   "org.scalatest"  %% "scalatest"  % "3.0.4"  % "test",
   "org.scalacheck" %% "scalacheck" % "1.13.5" % "test"
