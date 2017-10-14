@@ -197,7 +197,7 @@ object Tree extends Log {
     case Node(x, left, End)   => s"${x}(${toString(left)},)"
     case Node(x, End, right)  => s"${x}(,${toString(right)})"
     case Node(x, left, right) => s"${x}(${toString(left)},${toString(right)})"
-
+    case x: PositionedNode[A] => throw new RuntimeException("Must not reach here!")
   }
   def fromString(str: String): Tree[Char] = {
     trace(s"str=${str}")
@@ -262,13 +262,12 @@ object Tree extends Log {
    * use fastParse
    */
   def fromStringParse(str: String): Tree[Char] = {
-    String2Tree.tt.parse(str).fold({
+    String2Tree.ttWithEnd.parse(str).fold({
       (_, _, _) => s99.End
     }, {
       case (x: Tree[Char], i: Int) => x
     })
 
-     
   }
 
 }
@@ -295,7 +294,9 @@ object String2Tree {
   val n4 = P(cc ~ "(" ~ n0 ~ "," ~ n0 ~ ")")
 
   val tt: P[Tree[Char]] = P(n1 | n2 | n3 | n0)
-
+  
+  val ttWithEnd: P[Tree[Char]] = P(tt ~ fastparse.all.End)
+  
 }
 object Example {
   import fastparse.all._
