@@ -301,35 +301,17 @@ object String2Tree {
 
 object String2TreeWithParboiled2 {
   import org.parboiled2._
-  
+
   class Calculator2(val input: ParserInput) extends Parser {
     def Alpha = rule { CharPredicate.LowerAlpha }
-    def n0 = rule { capture(Alpha) ~> { (x: String) => s99.Node(x.head) } }
-    def nx = rule{ n0 ~ "(,"~ n0~>{ (y: Node[Char],x:Node[Char]) => y.copy(right=x) } ~  ")"  }
-    def n1 = rule {
-      Alpha ~ "(" ~ "," ~ Alpha ~ ")" ~> {
-        (x: String, y: String) =>
-          s99.Node(x.head, s99.End, s99.Node(y.head))
-      }
-    }
+    def n0: Rule1[s99.Node[Char]] = rule { capture(Alpha) ~> { (x: String) => s99.Node(x.head) } }
+    def n1: Rule1[s99.Node[Char]] = rule { n0 ~ "(," ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(right = x) } ~ ")" }
+    def n2: Rule1[s99.Node[Char]] = rule { n0 ~ "(" ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(left = x) } ~ ",)" }
+    def n3: Rule1[s99.Node[Char]] = rule { n0 ~ "(" ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(left = x) } ~ "," ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(right = x) } ~ ")" }
 
-    def n2 = rule {
-      Alpha ~ "(" ~ Alpha ~ "," ~ ")" ~> {
-        (x: String, y: String) =>
-          s99.Node(x.head, s99.Node(y.head), s99.End)
-      }
-    }
+    def nn: Rule1[s99.Node[Char]] = rule { n1 | n2 | n3 | n0 }
 
-    def n3 = rule {
-      Alpha ~ "(" ~ Alpha ~ "," ~ Alpha ~ ")" ~> {
-        (x: String, y: String, z: String) =>
-          s99.Node(x.head, s99.Node(y.head), s99.Node(z.head))
-      }
-    }
-
-    def nn = rule { n1 | n2 | n3 | n0 }
-
-    //def InputLine = rule { n3a ~ EOI }
+    def InputLine = rule { nn ~ EOI }
   }
 
   class Calculator(val input: ParserInput) extends Parser {
