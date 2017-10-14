@@ -1,5 +1,8 @@
 package s99
 
+import scala.util.Success
+import scala.util.Failure
+
 sealed abstract class Tree[+T] {
   def layoutBinaryTree: Tree[T] = layoutBinaryTreeInternal(1, 1)._1
   def layoutBinaryTreeInternal(x: Int, depth: Int): (Tree[T], Int)
@@ -270,6 +273,17 @@ object Tree extends Log {
 
   }
 
+  def fromStringUseParboiled(str: String): Tree[Char] = {
+    if (str.isEmpty()) {
+      End
+    } else {
+      val res = (new String2TreeUseParboiled2(str)).InputLine.run()
+      res match {
+        case Success(x) => x
+        case Failure(_) => End
+      }
+    }
+  }
 }
 
 object String2Tree {
@@ -299,43 +313,18 @@ object String2Tree {
 
 }
 
-object String2TreeWithParboiled2 {
+class String2TreeUseParboiled2(val input: org.parboiled2.ParserInput) extends org.parboiled2.Parser {
   import org.parboiled2._
+  def Alpha = rule { CharPredicate.LowerAlpha }
+  def n0: Rule1[s99.Node[Char]] = rule { capture(Alpha) ~> { (x: String) => s99.Node(x.head) } }
+  def n1: Rule1[s99.Node[Char]] = rule { n0 ~ "(," ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(right = x) } ~ ")" }
+  def n2: Rule1[s99.Node[Char]] = rule { n0 ~ "(" ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(left = x) } ~ ",)" }
+  def n3: Rule1[s99.Node[Char]] = rule { n0 ~ "(" ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(left = x) } ~ "," ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(right = x) } ~ ")" }
 
-  class String2Tree(val input: ParserInput) extends Parser {
-    def Alpha = rule { CharPredicate.LowerAlpha }
-    def n0: Rule1[s99.Node[Char]] = rule { capture(Alpha) ~> { (x: String) => s99.Node(x.head) } }
-    def n1: Rule1[s99.Node[Char]] = rule { n0 ~ "(," ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(right = x) } ~ ")" }
-    def n2: Rule1[s99.Node[Char]] = rule { n0 ~ "(" ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(left = x) } ~ ",)" }
-    def n3: Rule1[s99.Node[Char]] = rule { n0 ~ "(" ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(left = x) } ~ "," ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(right = x) } ~ ")" }
+  def nn: Rule1[s99.Node[Char]] = rule { n1 | n2 | n3 | n0 }
 
-    def nn: Rule1[s99.Node[Char]] = rule { n1 | n2 | n3 | n0 }
-
-    def InputLine = rule { nn ~ EOI }
-  }
-
-  class Calculator(val input: ParserInput) extends Parser {
-    def InputLine = rule { Expression ~ EOI }
-
-    def Expression: Rule1[Int] = rule {
-      Term ~ zeroOrMore(
-        '+' ~ Term ~> ((_: Int) + _)
-          | '-' ~ Term ~> ((_: Int) - _))
-    }
-
-    def Term = rule {
-      Factor ~ zeroOrMore(
-        '*' ~ Factor ~> ((_: Int) * _)
-          | '/' ~ Factor ~> ((_: Int) / _))
-    }
-
-    def Factor = rule { Number | Parens }
-
-    def Parens = rule { '(' ~ Expression ~ ')' }
-
-    def Number = rule { capture(Digits) ~> (_.toInt) }
-
-    def Digits = rule { oneOrMore(CharPredicate.Digit) }
-
-  }
+  def InputLine: Rule1[s99.Node[Char]] = rule { nn ~ EOI }
 }
+
+
+ 

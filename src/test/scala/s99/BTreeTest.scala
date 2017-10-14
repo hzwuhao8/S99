@@ -122,10 +122,7 @@ class BTreeTest extends FunSuite with Checkers with Log {
           debug(s"t3=\n${t3}\n")
           t1 == t3
 
-          val t4: Node[Char] = {
-            val tx = (new String2TreeWithParboiled2.String2Tree(s)).InputLine.run()
-            tx.get
-          }
+          val t4: Tree[Char] =Tree.fromStringUseParboiled(s)
 
           t == t1 && t1 == t3 && t4 == t3
       }

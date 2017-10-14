@@ -66,7 +66,7 @@ object MathOne extends Log {
       }
     }
     def goldbach(): List[(Int,Int)] = {
-      debug { s"n=${n}" }
+      trace { s"n=${n}" }
       require(n > 0 && n % 2 == 0)
       val xs = listPrimesinRange(1, n)
       val ys = P0828.combinations(2, xs)
