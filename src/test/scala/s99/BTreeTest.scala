@@ -46,10 +46,10 @@ class BTreeTest extends FunSuite with Checkers with Log {
     val res = Tree.symmetricBalancedTrees(5, 'x)
     debug(s"res=\n${res.mkString("\n")}")
   }
-  
-  test("P60"){
-    assert( Tree.minHbalNodes(3) == 4 )
-    assert( Tree.minHbalNodes(4) == 7 )
+
+  test("P60") {
+    assert(Tree.minHbalNodes(3) == 4)
+    assert(Tree.minHbalNodes(4) == 7)
   }
 
   test("P61") {
@@ -66,36 +66,60 @@ class BTreeTest extends FunSuite with Checkers with Log {
       c1 == l1.size
     }
   }
-  
-  test("p62"){
+
+  test("p62") {
     val t = Node('a', Node('b'), Node('c', Node('d'), Node('e')))
-    assert( Tree.internalList(t) == List('a','c') )
-    
+    assert(Tree.internalList(t) == List('a', 'c'))
+
   }
-  
-  test("p62B"){
+
+  test("p62B") {
     val t = Node('a', Node('b'), Node('c', Node('d'), Node('e')))
-    assert( Tree.atLevel(t,2) == List('b','c') )
+    assert(Tree.atLevel(t, 2) == List('b', 'c'))
   }
-  
-  test("P64"){
+
+  test("P64") {
     val res = Node('a', Node('b', End, Node('c')), Node('d')).layoutBinaryTree
     debug(s"res=$res")
   }
-  
-  test("P67 A string representation of binary trees."){
+
+  test("P67 A string representation of binary trees.") {
     val t = Node('a', Node('b', Node('d'), Node('e')), Node('c', End, Node('f', Node('g'), End)))
     val res = Tree.toString(t)
     debug(s"res=${res}")
-    
+
     val t2 = Tree.fromString(res)
     debug(s"t2=${t2}")
     val res2 = Tree.toString(t2)
     debug(s"res2=${res2}")
     assert(res == res2)
-    
+
     //fail
     //a(b,c(d,))
+
+    val base = ('a' to 'z').toList
+    val gen = Gen.choose(1, 100)
+    val g2 = Gen.choose(1, 26)
+    val g3 = for {
+      i <- gen
+      j <- g2
+    } yield {
+      (i, j)
+    }
+    check {
+      Prop.forAll(g3) {
+        case (i, j) =>
+          val base2 = scala.util.Random.shuffle(base)
+          val base3 = base2.take(j)
+
+          val t = Tree.fromList(base3)
+          val s = Tree.toString(t)
+          val t1 = Tree.fromString(s)
+          t == t1
+
+      }
+    }
+
   }
-  
+
 }
