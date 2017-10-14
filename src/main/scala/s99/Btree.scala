@@ -302,7 +302,7 @@ object String2Tree {
 object String2TreeWithParboiled2 {
   import org.parboiled2._
 
-  class Calculator2(val input: ParserInput) extends Parser {
+  class String2Tree(val input: ParserInput) extends Parser {
     def Alpha = rule { CharPredicate.LowerAlpha }
     def n0: Rule1[s99.Node[Char]] = rule { capture(Alpha) ~> { (x: String) => s99.Node(x.head) } }
     def n1: Rule1[s99.Node[Char]] = rule { n0 ~ "(," ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(right = x) } ~ ")" }
