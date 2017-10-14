@@ -294,6 +294,16 @@ object Tree extends Log {
     case End                  => Nil
     case Node(x, left, right) => inOrder(left) ::: List(x) ::: inOrder(right)
   }
+
+  def preInTree[A](pre: List[A], in: List[A]): Tree[A] = {
+    trace(s"pre=$pre\tin=${in}")
+    pre match {
+      case Nil => End
+      case a :: as =>
+        val (leftIn, rightIn) = in.span(_ != a)
+        Node(a, preInTree(as.take(leftIn.size), leftIn), preInTree(as.drop(leftIn.size), rightIn.drop(1)))
+    }
+  }
 }
 
 object String2Tree {

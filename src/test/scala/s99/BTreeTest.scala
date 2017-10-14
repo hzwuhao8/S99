@@ -123,8 +123,11 @@ class BTreeTest extends FunSuite with Checkers with Log {
           t1 == t3
 
           val t4: Tree[Char] = Tree.fromStringUseParboiled(s)
+          val lPre = Tree.preorder(t4)
+          val lIn = Tree.inOrder(t4)
+          val t5 = Tree.preInTree(lPre, lIn)
 
-          t == t1 && t1 == t3 && t4 == t3
+          t == t1 && t1 == t3 && t4 == t3 && t4 == t5
       }
     }
 
@@ -143,6 +146,9 @@ class BTreeTest extends FunSuite with Checkers with Log {
 
     val l2 = Tree.inOrder(t)
     assert(l2 == List('d', 'b', 'e', 'a', 'c', 'g', 'f'))
+
+    val tt = Tree.preInTree(Tree.preorder(t), Tree.inOrder(t))
+    assert(t == tt)
 
   }
 }
