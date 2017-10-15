@@ -6,6 +6,7 @@ import scala.util.Failure
 sealed abstract class Tree[+T] {
   def layoutBinaryTree: Tree[T] = layoutBinaryTreeInternal(1, 1)._1
   def layoutBinaryTreeInternal(x: Int, depth: Int): (Tree[T], Int)
+  def toDotstring: String
 }
 
 case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
@@ -14,6 +15,7 @@ case class Node[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T] {
     val (rightTree, nextX) = right.layoutBinaryTreeInternal(myX + 1, depth + 1)
     (PositionedNode(value, leftTree, rightTree, myX, depth), nextX)
   }
+  def toDotstring: String = value.toString + left.toDotstring + right.toDotstring
 }
 
 case class PositionedNode[+T](value: T, left: Tree[T], right: Tree[T], x: Int, y: Int) extends Tree[T] {
@@ -21,10 +23,12 @@ case class PositionedNode[+T](value: T, left: Tree[T], right: Tree[T], x: Int, y
   def layoutBinaryTreeInternal(x: Int, depth: Int): (Tree[T], Int) = {
     throw new RuntimeException("Not Exec")
   }
+  def toDotstring: String = value.toString + left.toDotstring + right.toDotstring
 }
 
 case object End extends Tree[Nothing] {
   override def toString = "."
+  def toDotstring: String = "."
   def layoutBinaryTreeInternal(x: Int, depth: Int) = (End, x)
 }
 
@@ -304,6 +308,33 @@ object Tree extends Log {
         Node(a, preInTree(as.take(leftIn.size), leftIn), preInTree(as.drop(leftIn.size), rightIn.drop(1)))
     }
   }
+
+  def fromDotstring(ds: String): Tree[Char] = {
+    def fromDotstringR(pos: Int): (Tree[Char], Int) = {
+      debug(s"pos=${pos}\tc=${ds(pos)}")
+      val res = ds(pos) match {
+        case '.' => (End, pos + 1)
+        case c => {
+          val (lTree, lPos) = fromDotstringR(pos + 1)
+          val (rTree, rPos) = fromDotstringR(lPos)
+          (Node(c, lTree, rTree), rPos)
+        }
+      }
+      debug(s"res=${res}")
+      res
+    }
+    fromDotstringR(0)._1
+  }
+
+  def fromDotstringUsefastParse(ds: String): Tree[Char] = {
+    DotString2Tree.run.parse(ds) fold ({
+      (_, _, _) => s99.End
+    }, {
+      case (x: Tree[Char], i: Int) => x
+    })
+
+  }
+
 }
 
 object String2Tree {
@@ -346,5 +377,36 @@ class String2TreeUseParboiled2(val input: org.parboiled2.ParserInput) extends or
   def InputLine: Rule1[s99.Node[Char]] = rule { nn ~ EOI }
 }
 
+object DotString2Tree {
+  import fastparse.all._
+  val cc: P[Char] = P(CharIn('a' to 'z').!.map(_.head))
+  //val parens: P[Tree[Char]] = P(cc ~ "(" ~/ tt ~ "," ~ tt ~ ")")
 
+  /**
+   * e..
+   */
+  val n1: P[Node[Char]] = P { cc ~ ".." }.map { c => Node(c) }
+
+  /**
+   * a.b..
+   */
+  val n2: P[Node[Char]] = P { cc ~ "." ~ cc ~ ".." }.map { p => Node(p._1, s99.End, Node(p._2)) }
+
+  /**
+   * ab...
+   */
+  val n3: P[Node[Char]] = P { cc ~ cc ~ "..." }.map { p => Node(p._1, Node(p._2), s99.End) }
+
+  val n: P[Node[Char]] = P { n1 | n2 | n3 }
+
+  val na: P[Node[Char]] = P { cc ~ "." ~ nn }.map { p => (Node(p._1)).copy(right = p._2) }
+  val nb: P[Node[Char]] = P { cc ~ nn ~ "." }.map { p => (Node(p._1)).copy(left = p._2) }
+  val nc: P[Node[Char]] = P { cc ~ nn ~ nn }.map { p => (Node(p._1)).copy(left = p._2, right = p._3) }
+
+  val nn1: P[Node[Char]] = P { nn ~ "." ~ nn }.map { p => p._1.copy(right = p._2) }
+  val nn2: P[Node[Char]] = P { nn ~ nn ~ "." }.map { p => p._1.copy(left = p._2) }
+
+  val nn: P[Node[Char]] = P { n1 | n2 | n3 | na | nb | nc | nn1 | nn2 }
+  val run: P[Node[Char]] = P { nn ~ fastparse.all.End }
+}
  

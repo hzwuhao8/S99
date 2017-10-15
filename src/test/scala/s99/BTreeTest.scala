@@ -126,8 +126,11 @@ class BTreeTest extends FunSuite with Checkers with Log {
           val lPre = Tree.preorder(t4)
           val lIn = Tree.inOrder(t4)
           val t5 = Tree.preInTree(lPre, lIn)
+          
+          val dotstr =  t.toDotstring
+          val t6 = Tree.fromDotstringUsefastParse( dotstr)
 
-          t == t1 && t1 == t3 && t4 == t3 && t4 == t5
+          t == t1 && t1 == t3 && t4 == t3 && t4 == t5 && t == t6
       }
     }
 
@@ -150,5 +153,13 @@ class BTreeTest extends FunSuite with Checkers with Log {
     val tt = Tree.preInTree(Tree.preorder(t), Tree.inOrder(t))
     assert(t == tt)
 
+  }
+
+  test("P69") {
+    val s = "a(b(d,e),c(,f(g,)))"
+    val t = Tree.fromString(s)
+    val s1 = t.toDotstring
+    val t1 = Tree.fromDotstring(s1)
+    assert(t == t1)
   }
 }
