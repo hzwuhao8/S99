@@ -403,10 +403,7 @@ object DotString2Tree {
   val nb: P[Node[Char]] = P { cc ~ nn ~ "." }.map { p => (Node(p._1)).copy(left = p._2) }
   val nc: P[Node[Char]] = P { cc ~ nn ~ nn }.map { p => (Node(p._1)).copy(left = p._2, right = p._3) }
 
-  val nn1: P[Node[Char]] = P { nn ~ "." ~ nn }.map { p => p._1.copy(right = p._2) }
-  val nn2: P[Node[Char]] = P { nn ~ nn ~ "." }.map { p => p._1.copy(left = p._2) }
-
-  val nn: P[Node[Char]] = P { n1 | n2 | n3 | na | nb | nc | nn1 | nn2 }
+  val nn: P[Node[Char]] = P { n1 | n2 | n3 | na | nb | nc  }
   val run: P[Node[Char]] = P { nn ~ fastparse.all.End }
 }
  
