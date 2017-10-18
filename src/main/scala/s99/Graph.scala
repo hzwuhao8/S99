@@ -27,6 +27,9 @@ abstract class GraphBase[T, U] {
     nodes = Map(value -> n) ++ nodes
     n
   }
+  def toTermForm(): (List[T], List[(T,T,U)]) ={
+    (nodes.keys.toSet.toList, edges.map{ _.toTuple} )
+  }
 }
 
 class Graph[T, U] extends GraphBase[T, U] {
@@ -49,29 +52,53 @@ class Graph[T, U] extends GraphBase[T, U] {
 }
 
 object Graph {
-  def term[T](nodeList: List[T], edgeList: List[(T, T)]) = {
-    val g = new Graph[T, Int]
+
+  def term2[T](nodeList: List[T], edgeList: List[(T, T)]) = {
+    val tmp = edgeList.map { x => (x._1, x._2, ()) }
+    term(nodeList, tmp)
+  }
+
+  def term[T, U](nodeList: List[T], edgeList: List[(T, T, U)]) = {
+    val g = new Graph[T, U]
     nodeList.map { n => g.addNode(n) }
     nodeList.map { n =>
       {
         val subList = edgeList.filter(_._1 == n)
-        subList.foreach(x => g.addEdge(x._1, x._2, 0))
+        subList.foreach(x => g.addEdge(x._1, x._2, x._3))
+      }
+    }
+    g
+  }
+  def adjacent2[T](edgesList: List[(T, List[T])]) = {
+    val tmp = edgesList.map { e => (e._1, e._2.map { n => (n, ()) }) }
+    adjacent(tmp)
+  }
+  def adjacent[T, U](edgesList: List[(T, List[(T, U)])]) = {
+    val g = new Graph[T, U]
+    edgesList.foreach { e => g.addNode(e._1) }
+    edgesList.map { e =>
+      g.addNode(e._1)
+      e._2.foreach { n =>
+        g.addEdge(e._1, n._1, n._2)
       }
     }
     g
   }
 
-  def adjacent[T](edgesList: List[(T, List[T])]) = {
-    val g = new Graph[T, Int]
-    edgesList.foreach { e => g.addNode(e._1) }
-    edgesList.map { e =>
-      g.addNode(e._1)
-      e._2.foreach { n =>
-        g.addEdge(e._1, n, 0)
-      }
+  def fromString(str: String): Graph[String, Unit] = {
+    val str2 = str.drop(1).dropRight(1).mkString
+    val arr1 = str2.split(",");
+    val arr2 = arr1.map { s =>
+      val arr3 = s.split("-")
+      arr3
     }
-    g
+    val nodeList = arr2.flatten.toSet.toList
+    val edgesList = arr2.filter(_.size == 2).map { arr => (arr(0), arr(1)) }.toList
+    term2(nodeList, edgesList)
+
   }
+
+  
 }
 
 class Digraph[T, U] extends GraphBase[T, U] {
