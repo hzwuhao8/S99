@@ -71,7 +71,7 @@ object MTreeParse {
 
   val r2: P[MTree[Char]] = P { rr ~/ (rr ~ "^").rep(1) }.log().map { p => p._1.copy(children = p._1.children ::: p._2.toList) }
 
-  val r2a: P[MTree[Char]] = P { cc ~/ (rr ~ "^").rep(1) }.log().map { p => MTree(p._1, children = p._2.toList) }
+  val r2a: P[MTree[Char]] = P { cc ~ (rr ~ "^").rep(1) }.log().map { p => MTree(p._1, children = p._2.toList) }
 
   //  val r3: P[MTree[Char]] = P { cc ~ (rr ~ "^").rep(0) ~cc~ r2 ~ "^" }.log().map { p =>
   //    val parent = p._1
@@ -80,7 +80,7 @@ object MTreeParse {
   //    MTree(parent, children = (child ::: List(lastchild)))
   //  }
 
-  val rr: P[MTree[Char]] = P { baser2 | baser1 | r2a | r2 }.log()
+  val rr: P[MTree[Char]] = P { baser2 | baser1 | r2a  }.log()
 
   val rrr = P { rr ~ fastparse.all.End }
 
