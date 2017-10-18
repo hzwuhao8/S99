@@ -25,5 +25,9 @@ class GraphTest extends FunSuite with Checkers with Log {
     val t1 = Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").toTermForm
 
     debug(s"t1=${t1}")
+    
+    val t2 = Digraph.fromStringLabel("[p>q/9, m>q/7, k, p>m/5]")
+    debug(s"t2.toTermForm=${t2.toTermForm}")
+    debug(s"t2.toAdjacentForm=${t2.toAdjacentForm}")
   }
 }

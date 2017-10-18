@@ -33,7 +33,7 @@ abstract class GraphBase[T, U] {
   def toAdjacentForm(): List[(T, List[(T, U)])] = {
     val tt: List[T] = nodes.keys.toSet.toList
     tt.map { my: T =>
-      val e: List[(T, U)] = edges.filter(_.n1 == my).map { x => (x.n2.value, x.value) }
+      val e: List[(T, U)] = edges.filter(_.n1.value == my).map { x => (x.n2.value, x.value) }
       (my, e)
     }
   }
@@ -147,5 +147,26 @@ object Digraph {
       }
     }
     g
+  }
+
+  def fromStringLabel(str: String): Digraph[String, Int] = {
+    val str2 = str.drop(1).dropRight(1).mkString
+    val arr1 = str2.split(",");
+    val arr2 = arr1.map { s =>
+      s.trim.toList match {
+        case List(a)                          => List(a)
+        case p :: '>' :: q :: '/' :: v :: Nil => List(p, q, v)
+      }
+    }
+    val nodeList = arr2.flatMap { x =>
+      x match {
+        case List(a)       => List(a.toString)
+        case List(a, b, v) => List(a.toString, b.toString)
+      }
+    }.toSet.toList
+    val edgesList = arr2.filter(_.size == 3).map { arr =>
+      (arr(0).toString, arr(1).toString, arr(2).toString.toInt)
+    }.toList
+    termLabel(nodeList, edgesList)
   }
 }
