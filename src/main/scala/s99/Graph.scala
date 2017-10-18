@@ -90,3 +90,29 @@ class Digraph[T, U] extends GraphBase[T, U] {
     nodes(source).adj = e :: nodes(source).adj
   }
 }
+
+object Digraph {
+  def termLabel[T, U](nodeList: List[T], edgeList: List[(T, T, U)]) = {
+    val g = new Graph[T, U]
+    nodeList.map { n => g.addNode(n) }
+    nodeList.map { n =>
+      {
+        val subList = edgeList.filter(_._1 == n)
+        subList.foreach(x => g.addEdge(x._1, x._2, x._3))
+      }
+    }
+    g
+  }
+
+  def adjacentLabel[T, U](edgesList: List[(T, List[(T, U)])]) = {
+    val g = new Graph[T, U]
+    edgesList.foreach { e => g.addNode(e._1) }
+    edgesList.map { e =>
+      g.addNode(e._1)
+      e._2.foreach { n =>
+        g.addEdge(e._1, n._1, n._2)
+      }
+    }
+    g
+  }
+}
