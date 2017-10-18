@@ -27,8 +27,15 @@ abstract class GraphBase[T, U] {
     nodes = Map(value -> n) ++ nodes
     n
   }
-  def toTermForm(): (List[T], List[(T,T,U)]) ={
-    (nodes.keys.toSet.toList, edges.map{ _.toTuple} )
+  def toTermForm(): (List[T], List[(T, T, U)]) = {
+    (nodes.keys.toSet.toList, edges.map { _.toTuple })
+  }
+  def toAdjacentForm(): List[(T, List[(T, U)])] = {
+    val tt: List[T] = nodes.keys.toSet.toList
+    tt.map { my: T =>
+      val e: List[(T, U)] = edges.filter(_.n1 == my).map { x => (x.n2.value, x.value) }
+      (my, e)
+    }
   }
 }
 
@@ -98,7 +105,6 @@ object Graph {
 
   }
 
-  
 }
 
 class Digraph[T, U] extends GraphBase[T, U] {
