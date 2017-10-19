@@ -1,6 +1,6 @@
 package s99
 
-abstract class GraphBase[T, U] {
+abstract class GraphBase[T, U] extends Log {
   case class Edge(n1: Node, n2: Node, value: U) {
     def toTuple = (n1.value, n2.value, value)
   }
@@ -37,9 +37,36 @@ abstract class GraphBase[T, U] {
       (my, e)
     }
   }
+  def findPaths(from: T, to: T): List[List[T]] = {
+    findPathsIner(from, to, from)
+  }
+  def findPathsIner(from: T, to: T, orig: T): List[List[T]] = {
+    val fromOpt = nodes.get(from)
+    val toOpt = nodes.get(to)
+    val res: List[List[T]] = (fromOpt, toOpt) match {
+      case (None, _)                    => Nil
+      case (_, None)                    => Nil
+      case (Some(f), Some(t)) if f == t => Nil
+      case (Some(f), Some(t)) =>
+        val p1 = if (f.neighbors.contains(t)) {
+          List(f.value, t.value) :: Nil
+        } else {
+          Nil
+        }
+        val neig = f.neighbors.map { _.value }.filter(x => (x != f && x != t && x != orig))
+        trace(s"neig=${neig}")
+        val p2 = neig.flatMap { x =>
+          val pp = findPathsIner(x, to, orig)
+          pp.map { f.value :: _ }
+        }
+        p1 ::: p2
+    }
+    res
+  }
+
 }
 
-class Graph[T, U] extends GraphBase[T, U] {
+class Graph[T, U] extends GraphBase[T, U]{
   override def equals(o: Any) = o match {
     case g: Graph[T, U] => super.equals(g)
     case _              => false
@@ -55,6 +82,20 @@ class Graph[T, U] extends GraphBase[T, U] {
     edges = e :: edges
     nodes(n1).adj = e :: nodes(n1).adj
     nodes(n2).adj = e :: nodes(n2).adj
+  }
+
+  def findCycles(a: T): List[List[T]] = {
+    val naOpt = nodes.get(a)
+    naOpt match {
+      case None => Nil
+      case Some(na) =>
+        na.neighbors.flatMap { n =>
+          trace(s"findPath=${n.value} ->  ${a}")
+          val paths = findPaths(n.value, a)
+          trace(s"paths=${paths}")
+          paths.filterNot(_ == Nil).map { a :: _ }
+        }
+    }
   }
 }
 
@@ -96,7 +137,7 @@ object Graph {
     val str2 = str.drop(1).dropRight(1).mkString
     val arr1 = str2.split(",");
     val arr2 = arr1.map { s =>
-      val arr3 = s.split("-")
+      val arr3 = s.trim.split("-")
       arr3
     }
     val nodeList = arr2.flatten.toSet.toList
@@ -122,6 +163,7 @@ class Digraph[T, U] extends GraphBase[T, U] {
     edges = e :: edges
     nodes(source).adj = e :: nodes(source).adj
   }
+
 }
 
 object Digraph {
@@ -169,4 +211,5 @@ object Digraph {
     }.toList
     termLabel(nodeList, edgesList)
   }
+
 }

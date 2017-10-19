@@ -9,7 +9,7 @@ import org.scalacheck.Prop
 
 class GraphTest extends FunSuite with Checkers with Log {
 
-  test("") {
+  test("P80") {
     val g1 = Graph.term2(List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
       List(('b', 'c'), ('b', 'f'), ('c', 'f'), ('f', 'k'), ('g', 'h')))
 
@@ -25,9 +25,32 @@ class GraphTest extends FunSuite with Checkers with Log {
     val t1 = Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").toTermForm
 
     debug(s"t1=${t1}")
-    
+
     val t2 = Digraph.fromStringLabel("[p>q/9, m>q/7, k, p>m/5]")
     debug(s"t2.toTermForm=${t2.toTermForm}")
     debug(s"t2.toAdjacentForm=${t2.toAdjacentForm}")
+
+  }
+
+  test("P81") {
+    val g = Digraph.fromStringLabel("[p>q/9, m>q/7, k, p>m/5]")
+    val path = g.findPaths("p", "q")
+    debug(s"path=${path}")
+
+    val path2 = g.findPaths("p", "k")
+    debug(s"path2=${path2}")
+
+    assert(path2 == Nil)
+  }
+
+  test("82") {
+    val g = Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]")
+    debug(s"g=${g.toTermForm()}")
+    debug(s"path k -> f =  ${g.findPaths("k", "f")}")
+    debug(s"${g.nodes.get("b").map { _.neighbors }}")
+    debug(s"${g.nodes.get("c").map { _.neighbors }}")
+    debug(s"path b -> f =  ${g.findPaths("b", "f")}")
+    val p = g.findCycles("f")
+    debug(s"p=${p}")
   }
 }

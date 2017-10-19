@@ -277,17 +277,17 @@ object Tree extends Log {
 
   }
 
-  def fromStringUseParboiled(str: String): Tree[Char] = {
-    if (str.isEmpty()) {
-      End
-    } else {
-      val res = (new String2TreeUseParboiled2(str)).InputLine.run()
-      res match {
-        case Success(x) => x
-        case Failure(_) => End
-      }
-    }
-  }
+//  def fromStringUseParboiled(str: String): Tree[Char] = {
+//    if (str.isEmpty()) {
+//      End
+//    } else {
+//      val res = (new String2TreeUseParboiled2(str)).InputLine.run()
+//      res match {
+//        case Success(x) => x
+//        case Failure(_) => End
+//      }
+//    }
+//  }
 
   def preorder[A](t: Tree[A]): List[A] = t match {
     case End                  => Nil
@@ -364,18 +364,18 @@ object String2Tree {
 
 }
 
-class String2TreeUseParboiled2(val input: org.parboiled2.ParserInput) extends org.parboiled2.Parser {
-  import org.parboiled2._
-  def Alpha = rule { CharPredicate.LowerAlpha }
-  def n0: Rule1[s99.Node[Char]] = rule { capture(Alpha) ~> { (x: String) => s99.Node(x.head) } }
-  def n1: Rule1[s99.Node[Char]] = rule { n0 ~ "(," ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(right = x) } ~ ")" }
-  def n2: Rule1[s99.Node[Char]] = rule { n0 ~ "(" ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(left = x) } ~ ",)" }
-  def n3: Rule1[s99.Node[Char]] = rule { n0 ~ "(" ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(left = x) } ~ "," ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(right = x) } ~ ")" }
-
-  def nn: Rule1[s99.Node[Char]] = rule { n1 | n2 | n3 | n0 }
-
-  def InputLine: Rule1[s99.Node[Char]] = rule { nn ~ EOI }
-}
+//class String2TreeUseParboiled2(val input: org.parboiled2.ParserInput) extends org.parboiled2.Parser {
+//  import org.parboiled2._
+//  def Alpha = rule { CharPredicate.LowerAlpha }
+//  def n0: Rule1[s99.Node[Char]] = rule { capture(Alpha) ~> { (x: String) => s99.Node(x.head) } }
+//  def n1: Rule1[s99.Node[Char]] = rule { n0 ~ "(," ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(right = x) } ~ ")" }
+//  def n2: Rule1[s99.Node[Char]] = rule { n0 ~ "(" ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(left = x) } ~ ",)" }
+//  def n3: Rule1[s99.Node[Char]] = rule { n0 ~ "(" ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(left = x) } ~ "," ~ nn ~> { (y: s99.Node[Char], x: s99.Node[Char]) => y.copy(right = x) } ~ ")" }
+//
+//  def nn: Rule1[s99.Node[Char]] = rule { n1 | n2 | n3 | n0 }
+//
+//  def InputLine: Rule1[s99.Node[Char]] = rule { nn ~ EOI }
+//}
 
 object DotString2Tree {
   import fastparse.all._
