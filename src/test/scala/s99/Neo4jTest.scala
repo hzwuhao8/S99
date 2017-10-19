@@ -41,7 +41,7 @@ class Neo4jTest extends FunSuite with Checkers with Log {
     graphDb.shutdown()
   }
 
-  test("Neo4j P80") {
+  test("Neo4j P81") {
     val graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
     val tx = graphDb.beginTx()
 
@@ -63,12 +63,14 @@ class Neo4jTest extends FunSuite with Checkers with Log {
     val finder = GraphAlgoFactory.allPaths(
       PathExpanders.forTypeAndDirection(mytype, Direction.OUTGOING), 15);
     val paths = finder.findAllPaths(nMap("p"), nMap("q")).toList
-    val pp = paths.map{  path =>  path.nodes().toList.map{ n => n.getProperty("name")} }
+    val pp = paths.map { path => path.nodes().toList.map { n => n.getProperty("name") } }
     debug(s"paths=${pp.mkString("\n")}")
-    assert( pp.size == 2 )
-    assert( pp.contains( List("p","q")))
+
     tx.close()
     graphDb.shutdown()
+
+    assert(pp.size == 2)
+    assert(pp.contains(List("p", "q")))
   }
 
   def fromString(str: String) = {

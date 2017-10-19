@@ -64,9 +64,20 @@ abstract class GraphBase[T, U] extends Log {
     res
   }
 
+  def removeEdge(e: Edge) = {
+    edges.filterNot(_ == e)
+    e.n1.adj.filterNot(_ == e)
+    e.n2.adj.filterNot(_ == e)
+
+  }
+
+  def isConnected(): Boolean = {
+    nodes.forall(kv => !kv._2.neighbors.isEmpty)
+  }
+
 }
 
-class Graph[T, U] extends GraphBase[T, U]{
+class Graph[T, U] extends GraphBase[T, U] {
   override def equals(o: Any) = o match {
     case g: Graph[T, U] => super.equals(g)
     case _              => false
@@ -86,7 +97,7 @@ class Graph[T, U] extends GraphBase[T, U]{
 
   def findCycles(a: T): List[List[T]] = {
     val naOpt = nodes.get(a)
-    naOpt match {
+    val res = naOpt match {
       case None => Nil
       case Some(na) =>
         na.neighbors.flatMap { n =>
@@ -96,7 +107,32 @@ class Graph[T, U] extends GraphBase[T, U]{
           paths.filterNot(_ == Nil).map { a :: _ }
         }
     }
+    res.filterNot(_.size <= 3)
   }
+
+  def isTree(): Boolean = {
+    edges.forall(e => {
+      removeEdge(e)
+      val flag = isConnected() == false
+      flag
+    })
+  }
+
+  def edgeConnectsToGraph[T,U](e: Edge, nodes: List[Node]): Boolean =
+    !(nodes.contains(e.n1) == nodes.contains(e.n2))  // xor
+    
+   def spanningTrees = {
+    def spanningTreesR(graphEdges: List[Edge], graphNodes: List[Node], treeEdges: List[Edge]): List[Graph[T,U]] = {
+      if (graphNodes == Nil) List(Graph.term(nodes.keys.toList, treeEdges.map(_.toTuple)))
+      else if (graphEdges == Nil) Nil
+      else graphEdges.filter(edgeConnectsToGraph(_, graphNodes)) flatMap { ge =>
+        spanningTreesR(graphEdges.filterNot(_ == ge),
+                       graphNodes.filter(edgeTarget(ge, _) == None),
+                       ge :: treeEdges)
+                                                                        }
+    }
+    spanningTreesR(edges, nodes.values.toList.tail, Nil)
+  } 
 }
 
 object Graph {
