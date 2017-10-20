@@ -15,6 +15,7 @@ import org.neo4j.graphdb.Direction
 
 import scala.collection.convert.ImplicitConversionsToScala._
 import org.neo4j.graphdb.GraphDatabaseService
+import org.neo4j.graphdb.factory.GraphDatabaseFactory
 
 case class DIS(name: String) extends RelationshipType {
 
