@@ -179,19 +179,42 @@ class Graph[T, U] extends GraphBase[T, U] {
   }
 
   def colorNodes() = {
+
+    def run2(color: Int, uncolored: List[(Node, Int)], colored: List[(Node, Int)], adj: Set[Node]): (List[(Node, Int)], List[(Node, Int)]) = {
+      uncolored match {
+        case Nil => (colored, uncolored)
+        case a :: as =>
+          val t = (a._1, color)
+          debug { s"{$t}" }
+          val neighbors = a._1.neighbors
+          val nextadj: Set[Node] = adj ++ neighbors + a._1
+          val l1 = as.filter(p => nextadj.contains(p._1))
+          val l2 = as.filterNot(p => nextadj.contains(p._1))
+          debug(s"\nl1=${l1}\nl2=${l2}")
+          val (cList, ulist) = run2(color, l2, t :: colored, nextadj)
+          (cList, l1 ::: ulist)
+      }
+    }
+
     def run(seq: List[(Node, Int)], color: Int, res: List[(Node, Int)]): List[(Node, Int)] = {
       seq match {
         case Nil => res
         case a :: as =>
           val t = (a._1, color)
+          debug { s"{$t}" }
           val neighbors = a._1.neighbors
-          val (connectedList, notconnectedList) = as.span(p => neighbors.contains(p._1))
-          val xx = notconnectedList.map { p => (p._1, color) }
-          run(connectedList, color + 1, t :: xx ::: res)
+          debug(s"neighbors=${neighbors}")
+          val connectedList = as.filter { p => neighbors.contains(p._1) }
+          val notconnectedList = as.filterNot { p => neighbors.contains(p._1) }
+          debug(s"connectedList=${connectedList}")
+          debug(s"notconnectedList=${notconnectedList}")
+          val (cList, uList) = run2(color, notconnectedList, Nil, Set(a._1))
+
+          run(connectedList ::: uList, color + 1, t :: cList ::: res)
       }
     }
-    
-    run(nodesByDegree,0,Nil)
+
+    run(nodesByDegree, 0, Nil)
   }
 }
 

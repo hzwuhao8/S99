@@ -90,8 +90,8 @@ class GraphTest extends FunSuite with Checkers with Log {
       debug(s"trees=\n${tree.toTermForm()}")
     }
   }
-  
-  test("P85"){
+
+  test("P85") {
     val g1 = Graph.fromString("[a-b]")
     val g2 = Graph.fromString("[5-7]")
     debug(s"g1=${g1.toTermForm()}")
@@ -99,13 +99,25 @@ class GraphTest extends FunSuite with Checkers with Log {
     debug(s"g1 <=> g1 = ${g1.isIsomorphicTo(g1)}")
     debug(s"g1 <=> g2 = ${g1.isIsomorphicTo(g2)}")
   }
-  
-  test("P86"){
-    val g = Graph.fromString("[a-b, b-c, a-c, a-d]")
-    debug(s"res=${g.nodesByDegree()}")
-    debug(s"colorNodes=${g.colorNodes()}")
-  }
-  test("P87"){
+
+  test("P86") {
+    {
+      val g = Graph.fromString("[a-b, b-c, a-c, a-d]")
+      debug(s"res=${g.nodesByDegree()}")
+      debug(s"colorNodes=${g.colorNodes()}")
+    }
+
     
+    {
+      val str = """[A-B,A-H,B-D,C-D,D-I,D-K,E-F,E-K,F-G,G-H,G-K,H-K,H-I,H-J,I-J,J-K]"""
+      val g = Graph.fromString(str)
+      debug(s"${g.toTermForm()}")
+      debug(s"res=${g.nodesByDegree()}")
+      debug(s"colorNodes=${g.colorNodes()}")
+      
+    }
+  }
+  test("P87") {
+
   }
 }
