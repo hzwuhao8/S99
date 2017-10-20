@@ -29,6 +29,8 @@ libraryDependencies += "com.lihaoyi" %% "fastparse" % "0.4.4"
 
 libraryDependencies += "org.neo4j" % "neo4j" % "3.2.6" 
 
+libraryDependencies += "org.neo4j" % "neo4j-kernel" % "3.2.6"
+
 libraryDependencies += "org.neo4j" % "neo4j-kernel" % "3.2.6" % "test" classifier "tests"
 
 libraryDependencies += "org.neo4j" % "neo4j-common" % "3.2.6" % "test" classifier "tests"
