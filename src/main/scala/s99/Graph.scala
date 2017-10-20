@@ -7,6 +7,8 @@ abstract class GraphBase[T, U] extends Log {
   case class Node(value: T) {
     var adj: List[Edge] = Nil
     def neighbors: List[Node] = adj.map(edgeTarget(_, this).get)
+    def degree: Int = neighbors.size
+
   }
 
   var nodes: Map[T, Node] = Map()
@@ -148,7 +150,7 @@ class Graph[T, U] extends GraphBase[T, U] {
   }
 
   /**
-   * TODO 
+   * TODO
    *  f is AnyF    T <=> S
    *  2^(nodes.size-1)
    */
@@ -161,17 +163,36 @@ class Graph[T, U] extends GraphBase[T, U] {
     }
     val flag = (this.nodes.size == g.nodes.size) && (this.edges.size == g.edges.size)
     if (flag) {
-      val eA = edges.map{ _.toTuple}.map{  p => (p._1,p._2) }
-      val eB = g.edges.map{ _.toTuple}.map{  p => (p._1,p._2) }
-      val ff = eA.map{ p => (f(p._1),f(p._2))}
-      eB.toSet == ff.toSet 
-      
-       
+      val eA = edges.map { _.toTuple }.map { p => (p._1, p._2) }
+      val eB = g.edges.map { _.toTuple }.map { p => (p._1, p._2) }
+      val ff = eA.map { p => (f(p._1), f(p._2)) }
+      eB.toSet == ff.toSet
+
     } else {
       false
     }
   }
-  
+
+  def nodesByDegree() = {
+    val x: List[(Node, Int)] = nodes.map { kv => (kv._2, kv._2.degree) }.toList
+    x.sortBy(_._2).reverse
+  }
+
+  def colorNodes() = {
+    def run(seq: List[(Node, Int)], color: Int, res: List[(Node, Int)]): List[(Node, Int)] = {
+      seq match {
+        case Nil => res
+        case a :: as =>
+          val t = (a._1, color)
+          val neighbors = a._1.neighbors
+          val (connectedList, notconnectedList) = as.span(p => neighbors.contains(p._1))
+          val xx = notconnectedList.map { p => (p._1, color) }
+          run(connectedList, color + 1, t :: xx ::: res)
+      }
+    }
+    
+    run(nodesByDegree,0,Nil)
+  }
 }
 
 object Graph {
@@ -260,7 +281,6 @@ class Digraph[T, U] extends GraphBase[T, U] {
     nodes(source).adj = e :: nodes(source).adj
   }
 
-  
 }
 
 object Digraph {

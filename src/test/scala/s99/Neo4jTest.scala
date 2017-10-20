@@ -73,7 +73,7 @@ class Neo4jTest extends FunSuite with Checkers with Log {
         ('e', 'h', 5), ('f', 'g', 4), ('g', 'h', 1)))
 
     val nMap = create(nodeList, edgesList)
-
+  
     tx.close()
     graphDb.shutdown()
 

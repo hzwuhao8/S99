@@ -99,4 +99,13 @@ class GraphTest extends FunSuite with Checkers with Log {
     debug(s"g1 <=> g1 = ${g1.isIsomorphicTo(g1)}")
     debug(s"g1 <=> g2 = ${g1.isIsomorphicTo(g2)}")
   }
+  
+  test("P86"){
+    val g = Graph.fromString("[a-b, b-c, a-c, a-d]")
+    debug(s"res=${g.nodesByDegree()}")
+    debug(s"colorNodes=${g.colorNodes()}")
+  }
+  test("P87"){
+    
+  }
 }
