@@ -10,7 +10,7 @@ import org.scalacheck.Prop
 class GraphTest extends FunSuite with Checkers with Log {
 
   test("P80") {
-    val g1 = Graph.term2(List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
+    val g1 = Graph.term(List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
       List(('b', 'c'), ('b', 'f'), ('c', 'f'), ('f', 'k'), ('g', 'h')))
 
     debug(s"g1=${g1}")
@@ -52,5 +52,51 @@ class GraphTest extends FunSuite with Checkers with Log {
     debug(s"path b -> f =  ${g.findPaths("b", "f")}")
     val p = g.findCycles("f")
     debug(s"p=${p}")
+  }
+
+  test("P83") {
+    {
+      val g = Graph.fromString("[a-b, b-c, a-c]")
+      val trees = g.spanningTrees
+      debug(s"trees=\n${trees.map(_.toTermForm()).distinct.mkString("\n")}")
+
+    }
+    {
+      //http://mathworld.wolfram.com/AndrasfaiGraph.html
+      val g = Graph.fromString("[a-b, b-c, c-d,d-e,e-a]")
+      val trees = g.spanningTrees
+      val termFormatList = trees.map(_.toTermForm()).distinct
+      debug(s"trees=\n${termFormatList.mkString("\n")}")
+      assert(termFormatList.size == 5)
+    }
+  }
+
+  test("P84") {
+    {
+      val g = Graph.fromStringLabel("[a-b/1, b-c/2, a-c/3]")
+      val tree = g.minimalSpanningTree
+
+      debug(s"trees=\n${tree.toTermForm()}")
+    }
+    {
+      val g = Graph.termLabel(
+        List('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'),
+        List(('a', 'b', 5), ('a', 'd', 3), ('b', 'c', 2), ('b', 'e', 4),
+          ('c', 'e', 6), ('d', 'e', 7), ('d', 'f', 4), ('d', 'g', 3),
+          ('e', 'h', 5), ('f', 'g', 4), ('g', 'h', 1)))
+
+      val tree = g.minimalSpanningTree
+
+      debug(s"trees=\n${tree.toTermForm()}")
+    }
+  }
+  
+  test("P85"){
+    val g1 = Graph.fromString("[a-b]")
+    val g2 = Graph.fromString("[5-7]")
+    debug(s"g1=${g1.toTermForm()}")
+    debug(s"g2=${g2.toTermForm()}")
+    debug(s"g1 <=> g1 = ${g1.isIsomorphicTo(g1)}")
+    debug(s"g1 <=> g2 = ${g1.isIsomorphicTo(g2)}")
   }
 }

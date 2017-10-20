@@ -14,6 +14,7 @@ import org.neo4j.graphdb.PathExpanders
 import org.neo4j.graphdb.Direction
 
 import scala.collection.convert.ImplicitConversionsToScala._
+import org.neo4j.graphdb.GraphDatabaseService
 
 case class DIS(name: String) extends RelationshipType {
 
@@ -42,22 +43,11 @@ class Neo4jTest extends FunSuite with Checkers with Log {
   }
 
   test("Neo4j P81") {
-    val graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
+    implicit val graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
     val tx = graphDb.beginTx()
 
     val (nodeList, edgesList) = fromString("[p>q/9, m>q/7, k, p>m/5]")
-    val nList = nodeList.map { name =>
-      val n = graphDb.createNode()
-      n.setProperty("name", name)
-      (name, n)
-    }
-    val nMap = nList.toMap
-    edgesList.map {
-      case (name1, name2, value) =>
-        val n1 = nMap(name1)
-        val n2 = nMap(name2)
-        n1.createRelationshipTo(n2, mytype)
-    }
+    val nMap = create(nodeList, edgesList)
     val p = nMap("p")
 
     val finder = GraphAlgoFactory.allPaths(
@@ -73,6 +63,21 @@ class Neo4jTest extends FunSuite with Checkers with Log {
     assert(pp.contains(List("p", "q")))
   }
 
+  test("P84") {
+    implicit val graphDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
+    val tx = graphDb.beginTx()
+    val (nodeList, edgesList) = (
+      List('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'),
+      List(('a', 'b', 5), ('a', 'd', 3), ('b', 'c', 2), ('b', 'e', 4),
+        ('c', 'e', 6), ('d', 'e', 7), ('d', 'f', 4), ('d', 'g', 3),
+        ('e', 'h', 5), ('f', 'g', 4), ('g', 'h', 1)))
+
+    val nMap = create(nodeList, edgesList)
+
+    tx.close()
+    graphDb.shutdown()
+
+  }
   def fromString(str: String) = {
     val str2 = str.drop(1).dropRight(1).mkString
     val arr1 = str2.split(",");
@@ -94,4 +99,20 @@ class Neo4jTest extends FunSuite with Checkers with Log {
     (nodeList, edgesList)
   }
 
+  def create[T, U](nodeList: List[T], edgesList: List[(T, T, U)])(implicit graphDb: GraphDatabaseService) = {
+    val nList = nodeList.map { name =>
+      val n = graphDb.createNode()
+      n.setProperty("name", name)
+      (name, n)
+    }
+    val nMap = nList.toMap
+    edgesList.map {
+      case (name1, name2, value) =>
+        val n1 = nMap(name1)
+        val n2 = nMap(name2)
+        n1.createRelationshipTo(n2, mytype)
+    }
+
+    nList.toMap
+  }
 }

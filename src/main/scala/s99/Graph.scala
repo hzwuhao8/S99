@@ -17,7 +17,8 @@ abstract class GraphBase[T, U] extends Log {
   def edgeTarget(e: Edge, n: Node): Option[Node]
 
   override def equals(o: Any) = o match {
-    case g: GraphBase[T, U] => ((nodes.keys.toSet -- g.nodes.keys.toSet).isEmpty &&
+    case g: GraphBase[T, U] => (
+      (nodes.keys.toSet -- g.nodes.keys.toSet).isEmpty &&
       (edges.map(_.toTuple).toSet -- g.edges.map(_.toTuple).toSet).isEmpty)
     case _ => false
   }
@@ -118,31 +119,69 @@ class Graph[T, U] extends GraphBase[T, U] {
     })
   }
 
-  def edgeConnectsToGraph[T,U](e: Edge, nodes: List[Node]): Boolean =
-    !(nodes.contains(e.n1) == nodes.contains(e.n2))  // xor
-    
-   def spanningTrees = {
-    def spanningTreesR(graphEdges: List[Edge], graphNodes: List[Node], treeEdges: List[Edge]): List[Graph[T,U]] = {
-      if (graphNodes == Nil) List(Graph.term(nodes.keys.toList, treeEdges.map(_.toTuple)))
+  def edgeConnectsToGraph[T, U](e: Edge, nodes: List[Node]): Boolean =
+    !(nodes.contains(e.n1) == nodes.contains(e.n2)) // xor
+
+  def spanningTrees = {
+    def spanningTreesR(graphEdges: List[Edge], graphNodes: List[Node], treeEdges: List[Edge]): List[Graph[T, U]] = {
+      if (graphNodes == Nil) List(Graph.termLabel(nodes.keys.toList, treeEdges.map(_.toTuple)))
       else if (graphEdges == Nil) Nil
       else graphEdges.filter(edgeConnectsToGraph(_, graphNodes)) flatMap { ge =>
         spanningTreesR(graphEdges.filterNot(_ == ge),
-                       graphNodes.filter(edgeTarget(ge, _) == None),
-                       ge :: treeEdges)
-                                                                        }
+          graphNodes.filter(edgeTarget(ge, _) == None),
+          ge :: treeEdges)
+      }
     }
-    spanningTreesR(edges, nodes.values.toList.tail, Nil)
-  } 
+    spanningTreesR(edges, nodes.values.toList.tail, Nil).distinct
+  }
+
+  def minimalSpanningTree(implicit f: (U) => Ordered[U]) = {
+    def minimalSpanningTreeR(graphEdges: List[Edge], graphNodes: List[Node], treeEdges: List[Edge]): Graph[T, U] =
+      if (graphNodes == Nil) Graph.termLabel(nodes.keys.toList, treeEdges.map(_.toTuple))
+      else {
+        val nextEdge = graphEdges.filter(edgeConnectsToGraph(_, graphNodes)).reduceLeft((r, e) => if (r.value < e.value) r else e)
+        minimalSpanningTreeR(graphEdges.filterNot(_ == nextEdge),
+          graphNodes.filter(edgeTarget(nextEdge, _) == None),
+          nextEdge :: treeEdges)
+      }
+    minimalSpanningTreeR(edges, nodes.values.toList.tail, Nil)
+  }
+
+  /**
+   * TODO 
+   *  f is AnyF    T <=> S
+   *  2^(nodes.size-1)
+   */
+  def isIsomorphicTo[S, V](g: Graph[S, V]): Boolean = {
+    val zip = this.nodes.keys.zip(scala.util.Random.shuffle(g.nodes.keys))
+    debug(s"zip=${zip}")
+    def f(x: T): S = {
+      val z = zip.find(_._1 == x)
+      z.map(_._2).get
+    }
+    val flag = (this.nodes.size == g.nodes.size) && (this.edges.size == g.edges.size)
+    if (flag) {
+      val eA = edges.map{ _.toTuple}.map{  p => (p._1,p._2) }
+      val eB = g.edges.map{ _.toTuple}.map{  p => (p._1,p._2) }
+      val ff = eA.map{ p => (f(p._1),f(p._2))}
+      eB.toSet == ff.toSet 
+      
+       
+    } else {
+      false
+    }
+  }
+  
 }
 
 object Graph {
 
-  def term2[T](nodeList: List[T], edgeList: List[(T, T)]) = {
+  def term[T](nodeList: List[T], edgeList: List[(T, T)]) = {
     val tmp = edgeList.map { x => (x._1, x._2, ()) }
-    term(nodeList, tmp)
+    termLabel(nodeList, tmp)
   }
 
-  def term[T, U](nodeList: List[T], edgeList: List[(T, T, U)]) = {
+  def termLabel[T, U](nodeList: List[T], edgeList: List[(T, T, U)]) = {
     val g = new Graph[T, U]
     nodeList.map { n => g.addNode(n) }
     nodeList.map { n =>
@@ -178,8 +217,29 @@ object Graph {
     }
     val nodeList = arr2.flatten.toSet.toList
     val edgesList = arr2.filter(_.size == 2).map { arr => (arr(0), arr(1)) }.toList
-    term2(nodeList, edgesList)
+    term(nodeList, edgesList)
 
+  }
+
+  def fromStringLabel(str: String): Graph[String, Int] = {
+    val str2 = str.drop(1).dropRight(1).mkString
+    val arr1 = str2.split(",");
+    val arr2 = arr1.map { s =>
+      s.trim.toList match {
+        case List(a)                          => List(a)
+        case p :: '-' :: q :: '/' :: v :: Nil => List(p, q, v)
+      }
+    }
+    val nodeList = arr2.flatMap { x =>
+      x match {
+        case List(a)       => List(a.toString)
+        case List(a, b, v) => List(a.toString, b.toString)
+      }
+    }.toSet.toList
+    val edgesList = arr2.filter(_.size == 3).map { arr =>
+      (arr(0).toString, arr(1).toString, arr(2).toString.toInt)
+    }.toList
+    termLabel(nodeList, edgesList)
   }
 
 }
@@ -200,6 +260,7 @@ class Digraph[T, U] extends GraphBase[T, U] {
     nodes(source).adj = e :: nodes(source).adj
   }
 
+  
 }
 
 object Digraph {
